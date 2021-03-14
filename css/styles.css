@@ -1,0 +1,147 @@
+@import "./jq/jquery-ui.min.css";
+@import "./jq/jquery-ui.structure.min.css";
+@import "./jq/jquery-ui.theme.min.css";
+
+@font-face {
+  font-family: Germanica;
+  src: url('./fonts/Plain-Germanica.woff') format('woff'),
+    url("./fonts/Plain Germanica.ttf") format('truetype');
+}
+.ui-widget, .ui-widget-content, .ui-tabs-panel {
+	font-family: Germanica,Arial,sans-serif;
+}
+
+#titles {
+  position:fixed;
+  top:0px;
+  left:0px;
+  width:800px;
+  height:650px;
+  background-image: url('../assets/back.png');
+  z-index: 3;
+}
+
+.title {
+  position: relative;
+  font-family: Germanica;
+  color: lightgoldenrodyellow;
+}
+
+#topline {
+  position:fixed;
+  top:0px;
+  left:0px;
+  width: 788px;
+  height: 38px;
+  padding: 5px;
+  font-family: Germanica;
+  text-align: center;
+  color: lightgoldenrodyellow;
+  background-color: goldenrod;
+  border: solid 1px lightgoldenrodyellow;
+  z-index: 2;
+
+}
+
+#stats {
+  text-align: left;
+  width: 50%;
+  float: left;
+}
+
+#charpanel {
+    margin-left: 50%;
+}
+
+#charpic {
+  width: 25%;
+  height: 25%;
+}
+#charInv{
+
+}
+
+#panel {
+  width:788px;
+  color: lightgoldenrodyellow;
+  background-color: goldenrod;
+  border: solid 1px lightgoldenrodyellow;
+  display: none;
+  z-index: 2;
+  padding: 5px;
+  position:fixed;
+  top:50px;
+  left:0px;
+}
+
+#phaserblock {
+  position:fixed;
+  top:50px;
+  left:0px;
+  z-index: 1;
+}
+
+#dialogContainer {
+  width: 788px;
+  padding: 5px;
+  position:fixed;
+  top: 360px;
+  left: 7px;
+  height: 200px;
+  display: none;
+  z-index: 2;
+}
+
+#dialogPanel, #dialogText, #dialogButtonBar {
+
+  color: lightgoldenrodyellow;
+  background-color:goldenrod;
+  border:solid 1px lightgoldenrodyellow;
+}
+
+#dialogPanel {
+  position:relative;
+  width: 60%;
+  height: 100%;
+  margin-left:20%;
+  margin-right:20%;
+  padding: 5px;
+}
+
+#dialogText {
+  padding:5px;
+}
+
+#dialogButtonBar{
+  position:absolute;
+  bottom: 5px;
+  height: 30px;
+  padding: 5px;
+  width: 460px;
+}
+
+.dialogButton{
+  color: lightgoldenrodyellow;
+  background-color:darkgoldenrod;
+  margin: 5px;
+}
+
+/*
+table {
+ width: 100%;
+}
+td {
+  width:33%;
+}
+*/
+#ldialogButton {
+  float:left;
+}
+
+#mdialogButton {
+  margin-left: 33%;
+}
+
+#rdialogButton {
+  float:right;
+}

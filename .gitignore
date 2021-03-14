@@ -1,0 +1,7 @@
+.cache
+node_modules/
+*.sh
+package-lock.json
+jq/
+dist/
+parcel*

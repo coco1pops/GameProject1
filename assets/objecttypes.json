@@ -1,0 +1,38 @@
+[
+    {
+        "color": "#ffa0a0a4",
+        "name": "NPC",
+        "properties": [
+            {
+                "name": "npcCor",
+                "type": "int",
+                "value": 0
+            },
+            {
+                "name": "npcLevel",
+                "type": "int",
+                "value": 1
+            },
+            {
+                "name": "npcLst",
+                "type": "int",
+                "value": 0
+            },
+            {
+                "name": "npcName",
+                "type": "string",
+                "value": "Anna"
+            },
+            {
+                "name": "npcPath",
+                "type": "string",
+                "value": "Path1"
+            },
+            {
+                "name": "npcRel",
+                "type": "int",
+                "value": 0
+            }
+        ]
+    }
+]

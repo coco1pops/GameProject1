@@ -1,0 +1,36 @@
+{
+  "name": "gameproject1",
+  "version": "1.0.0",
+  "description": "Restructed Game Project",
+  "main": "index.html",
+  "scripts": {
+    "build": "parcel build index.html",
+    "serve": "parcel src/index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "gameproject1"
+  },
+  "author": "",
+  "license": "ISC",
+  "staticFiles": {
+    "staticPath": {
+      "staticPath": "assets",
+      "excludeGlob": "assets/*.+!(json)",
+      "staticOutDir": "assets"
+    }
+  },
+  "devDependencies": {
+    "behaviortree": "^2.0.4",
+    "cssnano": "^4.1.10",
+    "jquery": "^3.6.0",
+    "jquery-ui": "^1.12.1",
+    "phaser": "^3.53.1"
+  },
+  "dependencies": {
+    "help": "^3.0.2",
+    "jquery-ui-bundle": "^1.12.1-migrate",
+    "parcel": "^1.12.3",
+    "parcel-plugin-static-files-copy": "^2.5.1"
+  }
+}

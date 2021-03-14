@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" type="text/css" href="css/styles.css">
+  <title>Map</title>
+</head>
+
+<body>
+  <div id="titles">
+  </div>
+  <div id="topline">
+    <div id="controls">
+      <tr>
+        <td> Status </td>
+        <td> Inventory </td>
+        <td> Score </td>
+      </tr>
+    </div>
+  </div>
+  <div id="panel">
+    <div>Player Panel </div>
+    <table id="stats">
+      <tr>
+        <td> Name </td>
+        <td> <span id=playerName>player name</span> </td>
+      </tr>
+      <tr>
+        <td> Level </td>
+        <td> <span id=playerLevel>player level </span> </td>
+      </tr>
+      <tr>
+        <td> Sed </td>
+        <td> <span id=playerSed>player sed </span> </td>
+      </tr>
+      <tr>
+        <td> Skill </td>
+        <td> <span id=playerSkill>player skill </span> </td>
+      </tr>
+    </table>
+
+    <div id="charpanel">
+      <img id="charpic" src="assets/char.png">
+    </div>
+
+    <div id="charInv">
+      <ul>
+        <li><a href="#cTabs-1">Enchantments</a></li>
+        <li><a href="#cTabs-2">Gifts</a></li>
+        <li><a href="#cTabs-,3">Keys</a></li>
+        <li><a href="#cTabs-4">Objects</a></li>
+      </ul>
+
+      <div id="cTabs-1">
+        <table id="enchantments">
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+
+      <div id="cTabs-2">
+        <table id="gifts">
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+
+      <div id="cTabs-3">
+        <table id="keys">
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+
+      <div id="cTabs-4">
+        <table id="objects">
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="phaserblock">
+    <script src="js/index.js" type="text/javascript"></script>
+  </div>
+
+  <div id="dialogContainer">
+    <div id="dialogPanel">
+      <div id="dialogText">
+      </div>
+      <div id="dialogButtonBar">
+        <table>
+          <tr>
+            <td>
+              <input type="button" class="dialogButton" id="ldialogButton" />
+            </td>
+            <td>
+              <input type="button" class="dialogButton" id="mdialogButton" />
+            </td>
+            <td>
+              <input type="button" class="dialogButton" id="rdialogButton" />
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id = "npcDialogPanel">
+    <div id="diagOpts">
+      <ul>
+        <li><a href="#dTabs-1">Say</a></li>
+        <li><a href="#dTabs-2">Actions</a></li>
+        <li><a href="#dTabs-3">Give</a></li>
+      </ul>
+
+      <div id="dTabs-1">
+        <table id="say">
+          <thead><tr><th>Say</th><th>Effect</th><th>index</th></tr> </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+      <div id="dTabs-2">
+        <table id="actions">
+          <thead><tr><th>Action</th><th>Effect</th><th>index</th></tr> </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+      <div id="dTabs-3">
+        <table id="gifts">
+          <thead><tr><th>Give</th><th>Effect</th><th>index</th></tr> </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+</body>
+
+</html>
