@@ -7,29 +7,20 @@ export class Container extends Phaser.GameObjects.Sprite {
   }
 
   extractData(textAssets) {
-    let i = 0;
+    let self = this;
     let j = 0;
-    let o = null;
-    let invDets = null;
-    if (this.data) {
-      for (i = 0; i < this.data.count; i++) {
-        const obj = this.data.get(i);
-        if (obj) {
-          if (obj.name == "contentsList") {
-            this.contentsList = [];
-            const str = obj.value;
-            const lst = str.split(",");
-            for (j = 0; j < lst.length; j++) {
-              const k = j;
-              invDets = textAssets.inventory.find(o => o.key == lst[k]);
-              this.contentsList.push(invDets);
-            }
-            console.log(this.contentsList);
-          }
+    this.data.each(function(parent, key, value)) {
+      if (key == "contentsList") {
+        const lst = value.split(",");
+        for (j = 0; j < lst.length; j++) {
+          const k = j;
+          invDets = textAssets.inventory.find(o => o.key == lst[k]);
+          self.contentsList.push(invDets);
         }
       }
-    }
+    });
   }
+
   setText(textAssets) {
     let contDets = textAssets.containers.find(o => o.name == this.name);
     this.description = contDets.description;
@@ -68,10 +59,7 @@ export class Player extends Phaser.GameObjects.Sprite {
       this.inventory.push(inventory[i]);
       this.sedp = this.sedp + inventory[i].sed;
       this.skillp = this.skillp + inventory[i].skill;
-
-      qDialog.addEnchantments(inventory[i]);
     }
-    qDialog.updateStats(this);
   }
 
 }
@@ -91,16 +79,12 @@ export class NPC extends Phaser.GameObjects.PathFollower {
   }
 
   extractData() {
-    let i = 0;
-    let j = 0;
-    let o = null;
-    if (this.data) {
-      for (i = 0; i < this.data.count; i++) {
-        const obj = this.data.get(i);
-        if (obj) this[obj.name] = obj.value;
+    let self = this;
+    this.data.each(function(parent, key, value){
+          self[key] = value;
+        });
       }
-    }
-  }
+
   buildPath(map) {
     const nPCPath = map.findObject("Object Layer", obj => obj.name === this.npcPath);
     this.x = nPCPath.x;
