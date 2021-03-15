@@ -8,17 +8,21 @@ export class Container extends Phaser.GameObjects.Sprite {
 
   extractData(textAssets) {
     let self = this;
-    let j = 0;
-    this.data.each(function(parent, key, value)) {
-      if (key == "contentsList") {
-        const lst = value.split(",");
-        for (j = 0; j < lst.length; j++) {
-          const k = j;
-          invDets = textAssets.inventory.find(o => o.key == lst[k]);
-          self.contentsList.push(invDets);
+    console.log ("extract data");
+    console.log (this.data);
+    if (this.data)
+      this.data.each(function(parent, key, obj) {
+        console.log(key);
+        if (key == "contentsList") {
+          const lst = obj.split(",");
+          console.log("List",lst);
+          for (j = 0; j < lst.length; j++) {
+            const k = j;
+            const invDets = textAssets.inventory.find(o => o.key == lst[k]);
+            self.contentsList.push(invDets);
+          }
         }
-      }
-    });
+      });
   }
 
   setText(textAssets) {
@@ -50,16 +54,12 @@ export class Player extends Phaser.GameObjects.Sprite {
     this.dialogStage = 0;
   }
 
-  addInventory(inventory)
-  // adds an array of objects
+  addInventory(inv)
+  // adds inventory
   {
-    let i = 0;
-    let tmp = "";
-    for (i = 0; i < inventory.length; i++) {
-      this.inventory.push(inventory[i]);
-      this.sedp = this.sedp + inventory[i].sed;
-      this.skillp = this.skillp + inventory[i].skill;
-    }
+    this.inventory.push(inv);
+    this.sedp = this.sedp + inv.sed;
+    this.skillp = this.skillp + inv.skill;
   }
 
 }
@@ -80,10 +80,10 @@ export class NPC extends Phaser.GameObjects.PathFollower {
 
   extractData() {
     let self = this;
-    this.data.each(function(parent, key, value){
-          self[key] = value;
-        });
-      }
+    this.data.each(function(parent, key, value) {
+      self[key] = value;
+    });
+  }
 
   buildPath(map) {
     const nPCPath = map.findObject("Object Layer", obj => obj.name === this.npcPath);
@@ -127,7 +127,7 @@ export class NPC extends Phaser.GameObjects.PathFollower {
   animate() {
 
     let dir = "left";
-    if(this.pathDelta){
+    if (this.pathDelta) {
       let x = this.pathDelta.x;
       let y = this.pathDelta.y;
 
@@ -158,7 +158,7 @@ export class NPC extends Phaser.GameObjects.PathFollower {
     this.resumeFollow();
   }
 
-  getPreAmble(textAssets){
+  getPreAmble(textAssets) {
     let prompt = "You approach " + textAssets.Level[this.npcLevel] + " " + this.npcName + ".<br>";
     prompt = prompt + "She " + textAssets.nPCAspect[this.npcRel] + ". " + textAssets.nPCPreamble[this.nPCRel] + ".<br>";
     prompt = prompt + "Relationship: " + textAssets.nPCRelationship[this.npcRel] + "<br>";
@@ -167,27 +167,30 @@ export class NPC extends Phaser.GameObjects.PathFollower {
     return prompt;
   }
 
-  getOpts(textAssets){
+  getOpts(textAssets) {
     let drow = "";
-    textAssets.playerDialog.forEach(function (entry) {
-      if (entry.phase == this.npcLst || entry.phase -1 == this.npcLst) {
-        const nText = entry.text.replace("+n",this.npcName);
-        drow = drow + "<tr><td>" + entry.text + "</td><td>" + entry.effect + "</td><td>"+ entry.respSet + "</td></tr>";
+    textAssets.playerDialog.forEach(function(entry) {
+      if (entry.phase == this.npcLst || entry.phase - 1 == this.npcLst) {
+        const nText = entry.text.replace("+n", this.npcName);
+        drow = drow + "<tr><td>" + entry.text + "</td><td>" + entry.effect + "</td><td>" + entry.respSet + "</td></tr>";
       }
     });
 
     let arow = "";
-    textAssets.playerActions.forEach(function (entry) {
-      if (entry.phase == this.npcLst || entry.phase -1 == this.npcLst) {
-        const nText = entry.text.replace("+n",this.npcName);
-        arow = arow + "<tr><td>" + entry.text + "</td><td>" + entry.effect + "</td><td>"+ entry.respSet + "</td></tr>";
+    textAssets.playerActions.forEach(function(entry) {
+      if (entry.phase == this.npcLst || entry.phase - 1 == this.npcLst) {
+        const nText = entry.text.replace("+n", this.npcName);
+        arow = arow + "<tr><td>" + entry.text + "</td><td>" + entry.effect + "</td><td>" + entry.respSet + "</td></tr>";
       }
     });
-    return {dialog:drow, actions:arow};
+    return {
+      dialog: drow,
+      actions: arow
+    };
     //TODO: Retrieve gift entries
   }
 
-  getResult(success){
+  getResult(success) {
     //TODO:Retrieve appropriate response
   }
 

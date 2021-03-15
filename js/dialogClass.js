@@ -320,8 +320,12 @@ export default class DialogClass {
 
           if (player.dialogStage == 1) {
             prompt = "These items have been added to your inventory.";
-            player.addInventory(container.contentsList);
-            addEnchantments(invText);
+            console.log(container.contentsList);
+            container.contentsList.each(function (row) {
+              player.addInventory(row);
+              addEnchantment(row);
+            });
+
             updateStats(player);
             container.contentsList = null;
 
