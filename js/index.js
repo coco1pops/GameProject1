@@ -5,7 +5,7 @@ const qDialog = new DialogClass();
 
 import {Container, Player, NPC} from "./objectClasses.js";
 
-import {DialogDriver} from "./dialogDriver.js";
+import {DialogDriver, ContainerDriver} from "./dialogDriver.js";
 
 import setAnims from "./anims.js";
 
@@ -206,7 +206,18 @@ function create() {
 
   function _collideContainer(player, container) {
     // TODO Pause Scene might be better
-    qDialog.containerDialog(player, container);
+    this.scene.pause();
+    player.body.setVelocity(0);
+    player.body.enable = false;
+    const cd = new ContainerDriver();
+    cd.init(qDialog, player, container, textAssets);
+    cd.stepDialog("n");
+  }
+
+  function _catchFin(detail){
+    detail = null;
+    player.body.enable = true;
+    this.scene.resume();
   }
 
   function _collideNPC(player,nPC) {

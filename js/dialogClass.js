@@ -393,7 +393,7 @@ export default class DialogClass {
     }
   }
 
-  displayEndDialogue(prompt) {
+  displayEndDialogue(prompt, driver) {
 
     $(".dialogButton").unbind("click");
     $("#dialogText").html(prompt);
@@ -409,6 +409,66 @@ export default class DialogClass {
     function _catchResponse(resp) {
       $("#dialogContainer").hide();
       //re-enable player and nPC
+      const event = new CustomEvent('Fin', {detail:driver});
     }
   }
+  displayYesNo(prompt, driver) {
+
+    $("#dialogText").html(prompt);
+
+    addButtons([{
+      text: "Yes",
+      response: "yes"
+    }, {
+      text: "No",
+      response: "no"
+    }]);
+  }
+
+  addButtons(buttons) {
+    $(".dialogButton").unbind("click");
+
+    switch (buttons.length) {
+      case 1: {
+        $("#mdialogButton").prop("value", buttons[0].text).show();
+        $("#mdialogButton").click(function() {
+          _catchResponse(buttons[0].response);
+        });
+        $("#ldialogButton").hide();
+        $("#rdialogButton").hide();
+        break;
+      }
+      case 2: {
+        $("#ldialogButton").prop("value", buttons[0].text).show();
+        $("#ldialogButton").click(function() {
+          _catchResponse(buttons[0].response);
+        });
+        $("#rdialogButton").prop("value", buttons[1].text).show();
+        $("#rdialogButton").click(function() {
+          _catchResponse(buttons[1].response);
+        });
+        $("#mdialogButton").hide();
+        break;
+      }
+      case 3: {
+        $("#ldialogButton").prop("value", buttons[0].text).show();
+        $("#ldialogButton").click(function() {
+          _catchResponse(buttons[0].response);
+        });
+        $("#mdialogButton").prop("value", buttons[1].text).show();
+        $("#mdialogButton").click(function() {
+          _catchResponse(buttons[1].response);
+        });
+        $("#rdialogButton").prop("value", buttons[2].text).show();
+        $("#rdialogButton").click(function() {
+          _catchResponse(buttons[2].response);
+        });
+        break;
+      }
+    }
+    function _catchResponse(resp) {
+      $("#dialogContainer").hide();
+      driver.stepDialog(resp);
+    }
+}
 }
