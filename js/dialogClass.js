@@ -279,15 +279,15 @@ export default class DialogClass {
             return;
           }
 
-          if (player.dialogStage == 0 && container.contentsList) {
+          if (player.dialogStage == 0 && container.contents) {
             let prompt = container.search;
             // There are items to collect
 
             prompt = prompt + ":";
             let i = 0;
-            for (i = 0; i < container.contentsList.length; i++)
-              prompt = prompt + "<br>" + container.contentsList[i].name +
-              ", " + container.contentsList[i].description;
+            for (i = 0; i < container.contents.length; i++)
+              prompt = prompt + "<br>" + container.contents[i].name +
+              ", " + container.contents[i].description;
 
             prompt = prompt + "<br><br>Do you want to collect these items?";
 
@@ -304,7 +304,7 @@ export default class DialogClass {
             return;
           }
 
-          if (player.dialogStage == 0 && !container.contentsList) {
+          if (player.dialogStage == 0 && !container.contents) {
 
             // There are no items to collect
             prompt = container.search + " nothing.";
@@ -320,14 +320,14 @@ export default class DialogClass {
 
           if (player.dialogStage == 1) {
             prompt = "These items have been added to your inventory.";
-            console.log(container.contentsList);
-            container.contentsList.each(function (row) {
+            console.log(container.contents);
+            container.contents.forEach(function (row) {
               player.addInventory(row);
-              addEnchantment(row);
+              addEnchantments(row);
             });
 
             updateStats(player);
-            container.contentsList = null;
+            container.contents = null;
 
             player.dialogStage = 0;
             $("#dialogText").html(prompt);

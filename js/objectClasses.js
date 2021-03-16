@@ -4,25 +4,21 @@ export class Container extends Phaser.GameObjects.Sprite {
     this.description = "";
     this.search = "";
     this.contentsList = null;
+    this.contents=null;
   }
 
   extractData(textAssets) {
-    let self = this;
-    console.log ("extract data");
-    console.log (this.data);
-    if (this.data)
-      this.data.each(function(parent, key, obj) {
-        console.log(key);
-        if (key == "contentsList") {
-          const lst = obj.split(",");
-          console.log("List",lst);
-          for (j = 0; j < lst.length; j++) {
-            const k = j;
-            const invDets = textAssets.inventory.find(o => o.key == lst[k]);
-            self.contentsList.push(invDets);
-          }
-        }
-      });
+
+    if (this.contentsList) {
+      const lst = this.contentsList.split(",");
+      this.contents=[];
+      let j = 0;
+      for (j = 0; j < lst.length; j++) {
+        const k = j;
+        const invDets = textAssets.inventory.find(o => o.key == lst[k]);
+        this.contents.push(invDets);
+      }
+    }
   }
 
   setText(textAssets) {
