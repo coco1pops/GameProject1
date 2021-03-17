@@ -210,8 +210,8 @@ function create() {
     player.body.setVelocity(0);
     player.body.enable = false;
     const cd = new ContainerDriver();
-    cd.init(qDialog, player, container, textAssets);
-    cd.stepDialog("n");
+    cd.init(player, container);
+    cd.stepOn(qDialog, textAssets, "n");
   }
 
   function _catchFin(detail){

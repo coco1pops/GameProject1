@@ -211,7 +211,7 @@ export default class DialogClass {
   //TODO display menu (new, load, save (?), opts (?))
   displayMainMenu() {}
 
-  containerDialog(player, container) {
+/*  containerDialog(player, container) {
     player.body.moves = false;
 
     let prompt = "You approach the " + container.name +
@@ -230,7 +230,7 @@ export default class DialogClass {
 
     $("#dialogContainer").show();
 
-    function _addButtons(buttons) {
+    function addButtons(buttons) {
       $(".dialogButton").unbind("click");
 
       switch (buttons.length) {
@@ -321,7 +321,7 @@ export default class DialogClass {
           if (player.dialogStage == 1) {
             prompt = "These items have been added to your inventory.";
             console.log(container.contents);
-            container.contents.forEach(function (row) {
+            container.contents.forEach(function(row) {
               player.addInventory(row);
               addEnchantments(row);
             });
@@ -392,7 +392,7 @@ export default class DialogClass {
       dialogDriver.stepDialog(resp); // call plugin step passing in response
     }
   }
-
+*/
   displayEndDialogue(prompt, driver) {
 
     $(".dialogButton").unbind("click");
@@ -409,23 +409,29 @@ export default class DialogClass {
     function _catchResponse(resp) {
       $("#dialogContainer").hide();
       //re-enable player and nPC
-      const event = new CustomEvent('Fin', {detail:driver});
+      const event = new CustomEvent('Fin', {
+        detail: driver
+      });
     }
   }
+
   displayYesNo(prompt, driver) {
 
     $("#dialogText").html(prompt);
 
-    addButtons([{
+    this.addButtons([{
       text: "Yes",
       response: "yes"
     }, {
       text: "No",
       response: "no"
-    }]);
+    }],
+    driver);
+
+    $("#dialogContainer").show();
   }
 
-  addButtons(buttons) {
+  addButtons(buttons, driver) {
     $(".dialogButton").unbind("click");
 
     switch (buttons.length) {
@@ -466,9 +472,10 @@ export default class DialogClass {
         break;
       }
     }
+
     function _catchResponse(resp) {
       $("#dialogContainer").hide();
-      driver.stepDialog(resp);
+      driver.stepOn(this, resp);
     }
-}
+  }
 }
