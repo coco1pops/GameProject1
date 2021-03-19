@@ -40,7 +40,6 @@ const config = {
 const game = new Phaser.Game(config);
 let controls;
 let showDebug = true; // test to see if this disables the debug view
-var dialogStage = null;
 
 function preload() {
   this.load.image("tiles", "../assets/tmw_desert_spacing.png");
@@ -204,21 +203,33 @@ function create() {
     });
   });
 
+  var dialogEmitter = new Phaser.Events.EventEmitter();
+  qDialog.emitter=dialogEmitter;
+  dialogEmitter.addListener("finCon", _catchFin);
+  dialogEmitter.addListener("finNPC", _catchNPC);
+
   function _collideContainer(player, container) {
     // TODO Pause Scene might be better
-    this.scene.pause();
     player.body.setVelocity(0);
     player.body.enable = false;
+//    this.scene.pause();
     const cd = new ContainerDriver();
-    cd.init(player, container);
+    cd.init(player, container, dialogEmitter);
     cd.stepOn(qDialog, textAssets, "n");
   }
 
   function _catchFin(detail){
     detail = null;
     player.body.enable = true;
-    this.scene.resume();
   }
+
+  function _catchNPC(detail){
+      const timedEvent = detail.nPC.scene.time.delayedCall(6000, detail.nPC.onEvent, [], detail.nPC);
+      detail = null;
+    //  player.scene.scene.resume();
+      player.body.enable = true;
+    }
+
 
   function _collideNPC(player,nPC) {
     // disable player and nPC
@@ -227,12 +238,14 @@ function create() {
     /* qDialog.nPCDialog(player, nPC, textAssets); */
 
     player.body.setVelocity(0);
-    nPC.pauseFollow();
     nPC.body.enable = false;
-    this.scene.pause();
+    nPC.pauseFollow();
+    nPC.setActive(false);
 
-    dialogDriver.init(qDialog,player,nPC,textAssets);
-    dialogDriver.stepDialog("y");
+    const dd = new DialogDriver();
+
+    dd.init(player, nPC, dialogEmitter, textAssets);
+    dd.stepOn(qDialog, "n");
   }
 
 }

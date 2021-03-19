@@ -9,119 +9,104 @@
     }
     //  Called when a Scene shuts down, it may then come back again later
     // (which will invoke the 'start' event) but should be considered dormant.
-    shutdown() {
-
-    }
-
     // Initialize the dialog modal
-    /*  init(qDialog, player, nPC, textAssets) {
+    init(player, nPC, emitter, textAssets) {
+      this.player = player;
+      this.nPC = nPC;
+      this.emitter = emitter;
+      this.textAssets = textAssets;
+      this.type = "finNPC";
 
-        let bb = {
-          player: player,
-          nPC: nPC,
-          stage: 0,
-          response: "no"
-        };
+    };
 
-        BehaviorTree.register("preamble", new Task({
+    stepOn(qDialog, response) {
 
-          run: function(bb) {
-            if (bb.player.dialogStatus > 0) return SUCCESS;
+      self = this;
 
-            const opts = bb.nPC.getPreAmble(textAssets);
-            qDialog.displayPreamble(bb.nPC, opts);
-            bb.player.dialogStatus = 1;
-            return FAILURE;
+      switch (this.player.dialogStage) {
+        case 0: { // Approach dialogue
+          const opts = this.nPC.getPreAmble(this.textAssets);
+          qDialog.displayYesNo( opts, this);
+          this.player.dialogStage = 1;
+          this.player.score = 0;
+        break;
+        }
+
+        case 1:
+        case 3:
+        case 5: { // Ask section
+          if (response == "no") {
+            this.fin(true, this.textAssets.walkaway, qDialog);
+            break;
           }
-        }));
 
+          const opts = this.nPC.getOpts(this.textAssets);
+          qDialog.displayAsk(opts);
+          this.player.dialogStage++;
+          break;
+          }
 
-        BehaviorTree.register("ask", new Task({
-          run: function(bb) {
+          case 2:
+          case 4:
+          case 6:  { // Catch result of Ask
+            if (response == "no") {
+              this.fin(true, this.textAssets.turndown, qDialog);
+              break;
+            }
+            // The player has chosen to continue and selected an option in
+            // response.
 
-            if (bb.player.dialogStatus % 2) return SUCCESS;
-            if (bb.response == 'no') {
-              bb.player.dialogStatus = 0;
-              qDialog.displayEndDialogue("PlayerExit");
-              return FAILURE;
+            if (this.nPC.Rel < 3)
+            {// in dialogue mode
+                if (response.effect > this.nPC.npcLst) { // Player over-reached
+                  const prompt = this.nPC.processFailure("dialogue", this.textAssets);
+                  this.fin(true, prompt, qDialog);
+                  break;
+                }
+                // Passed so update player score
+
+                const result = (this.nPC.npcLst + 1) * (this.nPC.npclst == response.effect) +
+                this.nPC.npcLst * (this.nPC.npclst - 1 == response.effect);
+                const prompt = this.nPC.getResult(result, this.textAssets);
+                qDialog.displayResult(prompt);
+                this.player.score = this.player.score + result;
+                this.player.dialogstage++;
+                break;
+            }
+            // Room mode
+            if (this.response.cor - this.player.skill > this.nPC.npcCor) {
+              const prompt = this.nPC.processFailure("room", this.textAssets);
+              this.fin(true, prompt, qDialog);
+              break;
             }
 
-            const opts = bb.nPC.getOpts(textAssets);
-            qDialog.displayAsk(opts);
-            bb.player.dialogStatus++;
-            return FAILURE;
-
-          }
-        }));
-
-        BehaviorTree.register("check", new Task({
-          run: function(bb) {
-            if (bb.response == "no") {
-              bb.player.dialogStatus = 0;
-              bb.player.score = 0;
-              qDialog.displayEndDialogue("PlayerExit");
-              return FAILURE;
+            const result = response.cor * this.player.skill;
+            const prompt = this.nPC.getResult(result, this.textAssets);
+            qDialog.displayResult(prompt);
+            this.player.score = this.player.score + result;
+            this.player.dialogstage++;
+            break;
+            }
+            case 7: {
+              // Reached the end so see if the player score is big enough to
+              //
+              const prompt = this.nPC.advance(this.player.score);
+              this.fin(true, prompt, qDialog)
             }
 
-            if (bb.nPC.npcLevel < 3)
-              if (bb.return.effect > bb.nPC.npcLst) {
-                bb.nPC.processFailure();
-                qDialog.displayEndDialogue("BadEnd1");
-                bb.player.dialogStatus = 0;
-                return FAILURE;
-              }
-            else {
-              bb.player.score = bb.player.score +
-                (bb.nPC.npcLst + 1) * (bb.nPC.npclst == bb.response.effect) +
-                bb.nPC.npcLst * (bb.nPC.npclst - 1 == bb.response.effect);
-              bb.nPC.getResult();
-            } else if (bb.response.cor - bb.player.skill > b.nPC.npcCor) {
-              bb.nPC.processFailure();
-              qDialog.displayEndDialogue("BadEnd2");
-              Bb.player.dialogStatus = 0;
-              return FAILURE;
-            } else
-              bb.player.score = bb.player.score + (bb.response.cor * bb.player.skill);
-
-            bb.player.dialogstatus++;
-            return SUCCESS;
-
-          }
-        }));
-
-        BehaviorTree.register("respond", new Task({
-          run: function(bb) {
-            if (bb.stage !== 2) return SUCCESS;
-            bb.stage = 3;
-            handleSuccess(bb);
-            // Player has been successful so need to put out successful response
-            return SUCCESS;
-          }
-        }));
-
-        BehaviorTree.register("update", new Task({
-          run: function(bb) {
-
-            // Update player and nPC Stats based on success
-            return SUCCESS;
-          }
-        }));
-
-
-        const rootStage = new Sequence({
-          nodes: ['preamble', 'ask', 'check', 'ask', 'check', 'ask', 'check', 'update']
-        });
-
-        const bTree = new BehaviorTree({
-          tree: rootStage,
-          blackboard: bb
-        });
+        }
       }
 
-      stepDialog(response) {
-        bb.response = response;
-        btree.step();
-      } */
+    fin(diag, prompt, qDialog) {
+      this.player.dialogStage = 0;
+      this.player.score = 0;
+      if (diag) {
+        qDialog.displayEndDialogue(prompt, this);
+      } else {
+        this.emitter.emit(this.type,this);
+        }
+      }
+
   }
 
   export class ContainerDriver {
@@ -131,9 +116,12 @@
     }
 
     // Initialize the dialog modal
-    init(player, container) {
-      this.player = player,
-      this.container = container
+    init(player, container, emitter) {
+      this.player = player;
+      this.container = container;
+      this.emitter = emitter;
+      this.type = "finCon";
+
     };
 
 
@@ -152,8 +140,8 @@
         }
         case 1: {
 
-          if (response = "no") {
-            this.fin(false, "");
+          if (response == "no") {
+            this.fin(false, "", qDialog);
             break;
           }
 
@@ -173,34 +161,39 @@
             break;
 
           } else {
-            prompt = container.search + " nothing.";
-            this.fin(true, prompt);
+            prompt = this.container.search + " nothing.";
+            this.fin(true, prompt, qDialog);
             break;
           }
         }
         case 2: {
+
+          if (response == "no") {
+            this.fin(false, "", qDialog);
+            break;
+          }
+
           prompt = "These items have been added to your inventory.";
+          const self = this;
           this.container.contents.forEach(function(row) {
-            this.player.addInventory(row);
+            self.player.addInventory(row);
             qDialog.addEnchantments(row);
           });
 
-          qDialog.updateStats(player);
+          qDialog.updateStats(this.player);
           this.container.contents = null;
 
-          this.fin(true, prompt);
+          this.fin(true, prompt, qDialog);
         }
       }
     }
 
-  fin(diag, prompt) {
+  fin(diag, prompt, qDialog) {
     this.player.dialogStage = 0;
     if (diag) {
       qDialog.displayEndDialogue(prompt, this);
     } else {
-      const event = new CustomEvent('Fin', {
-        detail: this
-      });
+      this.emitter.emit('finCon',this);
+      }
     }
-  }
   }

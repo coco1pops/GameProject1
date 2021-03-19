@@ -4,14 +4,14 @@ export class Container extends Phaser.GameObjects.Sprite {
     this.description = "";
     this.search = "";
     this.contentsList = null;
-    this.contents=null;
+    this.contents = null;
   }
 
   extractData(textAssets) {
 
     if (this.contentsList) {
       const lst = this.contentsList.split(",");
-      this.contents=[];
+      this.contents = [];
       let j = 0;
       for (j = 0; j < lst.length; j++) {
         const k = j;
@@ -48,6 +48,7 @@ export class Player extends Phaser.GameObjects.Sprite {
     this.skill = 0;
     this.skillp = 0;
     this.dialogStage = 0;
+    this.score = 0;
   }
 
   addInventory(inv)
@@ -152,11 +153,12 @@ export class NPC extends Phaser.GameObjects.PathFollower {
   onEvent() {
     this.body.enable = true;
     this.resumeFollow();
+    this.setActive(true);
   }
 
   getPreAmble(textAssets) {
     let prompt = "You approach " + textAssets.Level[this.npcLevel] + " " + this.npcName + ".<br>";
-    prompt = prompt + "She " + textAssets.nPCAspect[this.npcRel] + ". " + textAssets.nPCPreamble[this.nPCRel] + ".<br>";
+    prompt = prompt + "She " + textAssets.nPCAspect[this.npcRel] + ". " + textAssets.nPCPreamble[this.npcRel] + ".<br>";
     prompt = prompt + "Relationship: " + textAssets.nPCRelationship[this.npcRel] + "<br>";
     prompt = prompt + "Attitude: " + textAssets.nPCLst[this.npcLst] + "<br>";
     prompt = prompt + "Corruption: " + textAssets.nPCCor[this.npcCor];
@@ -165,8 +167,9 @@ export class NPC extends Phaser.GameObjects.PathFollower {
 
   getOpts(textAssets) {
     let drow = "";
+    const self = this;
     textAssets.playerDialog.forEach(function(entry) {
-      if (entry.phase == this.npcLst || entry.phase - 1 == this.npcLst) {
+      if (entry.phase == self.npcLst || entry.phase - 1 == self.npcLst) {
         const nText = entry.text.replace("+n", this.npcName);
         drow = drow + "<tr><td>" + entry.text + "</td><td>" + entry.effect + "</td><td>" + entry.respSet + "</td></tr>";
       }
@@ -174,7 +177,7 @@ export class NPC extends Phaser.GameObjects.PathFollower {
 
     let arow = "";
     textAssets.playerActions.forEach(function(entry) {
-      if (entry.phase == this.npcLst || entry.phase - 1 == this.npcLst) {
+      if (entry.phase == self.npcLst || entry.phase - 1 == self.npcLst) {
         const nText = entry.text.replace("+n", this.npcName);
         arow = arow + "<tr><td>" + entry.text + "</td><td>" + entry.effect + "</td><td>" + entry.respSet + "</td></tr>";
       }
@@ -186,13 +189,19 @@ export class NPC extends Phaser.GameObjects.PathFollower {
     //TODO: Retrieve gift entries
   }
 
-  getResult(success) {
-    //TODO:Retrieve appropriate response
-  }
+  processFailure(setting) {
+    if (setting == "dialogue") {
+      this.npcRel--;
+      if (this.npcRel < 0) this.npcRel = 0;
+      return "Dialogue failed";
+    }
+    this.npcCor--;
+    if (this.npcCor < 0) {
+      this.npcRel--;
+      this.npcCor = 0;
+    }
+    return "Seduction failed";
 
-  handleFailure() {
-    //TODO: Update nPC stats on failure
   }
-
 
 }
