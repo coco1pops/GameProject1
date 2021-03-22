@@ -6,15 +6,148 @@ require("../staticjs/jquery.titlesequence.js");
 export default class DialogClass {
   constructor() {
     //Add controls to the drop-down panel
+
+    this.status = false;
+    this.inventory = false;
+    this.resp = "no";
+    this.driver = null;
+    this.stopFlag = true;
+
+    const self = this;
+
+    // Status button
     $(document).ready(function() {
       $("#status").click(function() {
-        $("#panel").slideToggle("slow");
+        if (this.status) {
+          this.status = false;
+          $("#panel").slideUp("slow");
+          $("#inventory").button("enable");
+        } else {
+          this.status = true;
+          $("#panel").slideDown("slow");
+          $("#inventory").button("disable");
+        }
       });
     });
     $(document).ready(function() {
-      $("#charInv").tabs();
+      $("#inventory").click(function() {
+        if (this.inventory) {
+          this.inventory = false;
+          $("#invPanel").slideUp("slow");
+          $("#status").button("enable");
+        } else {
+          this.inventory = true;
+          $("#invPanel").slideDown("slow");
+          $("#status").button("disable");
+        }
+      });
     });
-    this.emitter = null;
+
+    $(document).ready(function() {
+      $("#controls").controlgroup();
+      $("#controlButtons").controlgroup();
+      $("#charInv").tabs();
+      $("#diagOpts").tabs();
+    })
+
+
+    $(function() {
+      $("#dialogContainer").dialog({
+          autoOpen: false,
+          buttons: [ {
+            id: "bYes",
+            text: "Yes",
+            click: function() {
+              self.resp = "yes";
+              $(this).dialog("close");
+            }},
+            {
+            id: "bNo",
+            text: "No",
+            click: function() {
+              self.resp = "no";
+              $(this).dialog("close");
+            }},
+            {
+            id: "bOK",
+            text: "Ok",
+            click: function() {
+            self.resp = "no";
+              $(this).dialog("close");
+            }}
+          ],
+          resizable: false,
+          position: {
+            my: "center",
+            at: "center",
+            of: "#phaserblock"
+          }
+        })
+        .on('dialogclose', function(event) {
+         self.catchResponse(self.resp);
+        });
+      });
+
+      $(function() {
+        $("#npcDialogPanel").dialog({
+            autoOpen: false,
+            buttons: [ {
+              id: "bAccept",
+              text: "Accept",
+              click: function() {
+                self.resp = "yes";
+                $(this).dialog("close");
+              }},
+              {
+              id: "bCancel",
+              text: "Cancel",
+              click: function() {
+                self.resp = "no";
+                $(this).dialog("close");
+              }}
+            ],
+            resizable: false,
+            title: "Encounter",
+            position: {
+              my: "center",
+              at: "top",
+              of: "#phaserblock"
+            },
+            width:790
+          })
+          .on('dialogclose', function(event) {
+           self.catchResponse(self.resp);
+          });
+        });
+  }
+
+  catchResponse(resp) {
+
+    if (this.stopFlag)
+      this.emitter.emit(this.driver.type, this.driver);
+    else
+      this.driver.stepOn(this, resp);
+  }
+
+  displayYesNo(prompt, driver) {
+    this.resp="no";
+    this.stopFlag = false;
+    this.driver = driver;
+    $("#bOK").hide();
+    $("#bYes").show();
+    $("#bNo").show();
+    $("#dialogContainer").dialog("option", "title", "Choose Option");
+    $("#dialogText").html(prompt);
+    $("#dialogContainer").dialog("open");
+
+  }
+
+  displayAsk(opts, stats, player){
+    $("#dnpcstats").html(stats);
+    $("#dplayerstats").html(player);
+    $("#drow").append(opts.dialog);
+    $("#arow").append(opts.actions);
+    $("#npcDialogPanel").dialog("open");
   }
 
   updateStats(player) {
@@ -212,89 +345,17 @@ export default class DialogClass {
   //TODO display menu (new, load, save (?), opts (?))
   displayMainMenu() {}
 
-  displayYesNo(prompt, driver) {
-
-    $("#dialogText").html(prompt);
-
-    this.addButtons([{
-        text: "Yes",
-        response: "yes"
-      }, {
-        text: "No",
-        response: "no"
-      }],
-      driver, false);
-
-    $("#dialogContainer").show();
-  }
-
   displayEndDialogue(prompt, driver) {
+    this.driver = driver;
+    this.stopFlag = true;
+    $("#bOK").show();
+    $("#bYes").hide();
+    $("#bNo").hide();
 
-    const self = this;
-
+    $("#dialogContainer").dialog("option", "title", "Confirm");
     $("#dialogText").html(prompt);
-
-    this.addButtons([{
-        text: "Ok",
-        response: "yes"
-      }],
-      driver, true);
-
-    $("#dialogContainer").show();
+    $("#dialogContainer").dialog("open");
 
   }
 
-  addButtons(buttons, driver, stopFlag) {
-
-    const self = this;
-
-    $(".dialogButton").unbind("click");
-
-    switch (buttons.length) {
-      case 1: {
-        $("#mdialogButton").prop("value", buttons[0].text).show();
-        $("#mdialogButton").click(function() {
-          _catchResponse(buttons[0].response, self);
-        });
-        $("#ldialogButton").hide();
-        $("#rdialogButton").hide();
-        break;
-      }
-      case 2: {
-        $("#ldialogButton").prop("value", buttons[0].text).show();
-        $("#ldialogButton").click(function() {
-          _catchResponse(buttons[0].response, self);
-        });
-        $("#rdialogButton").prop("value", buttons[1].text).show();
-        $("#rdialogButton").click(function() {
-          _catchResponse(buttons[1].response, self);
-        });
-        $("#mdialogButton").hide();
-        break;
-      }
-      case 3: {
-        $("#ldialogButton").prop("value", buttons[0].text).show();
-        $("#ldialogButton").click(function() {
-          _catchResponse(buttons[0].response, self);
-        });
-        $("#mdialogButton").prop("value", buttons[1].text).show();
-        $("#mdialogButton").click(function() {
-          _catchResponse(buttons[1].response, self);
-        });
-        $("#rdialogButton").prop("value", buttons[2].text).show();
-        $("#rdialogButton").click(function() {
-          _catchResponse(buttons[2].response, self);
-        });
-        break;
-      }
-    }
-
-    function _catchResponse(resp, self) {
-      $("#dialogContainer").hide();
-      if (stopFlag)
-        self.emitter.emit(driver.type, driver);
-      else
-        driver.stepOn(self, resp);
-    }
-  }
 }

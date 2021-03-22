@@ -41,7 +41,8 @@
           }
 
           const opts = this.nPC.getOpts(this.textAssets);
-          qDialog.displayAsk(opts);
+          const stats = this.nPC.getStats(this.textAssets);
+          qDialog.displayAsk(opts, stats, "Name: " + this.player.name);
           this.player.dialogStage++;
           break;
           }

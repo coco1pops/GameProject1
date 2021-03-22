@@ -11,6 +11,11 @@
 	font-family: Germanica,Arial,sans-serif;
 }
 
+.ui-widget .ui-button {
+  font-family: Germanica,Arial,sans-serif;
+  font-size: 16px;
+}
+
 #titles {
   position:fixed;
   top:0px;
@@ -34,8 +39,6 @@
   width: 788px;
   height: 38px;
   padding: 5px;
-  font-family: Germanica;
-  text-align: center;
   z-index: 2;
 
 }
@@ -48,6 +51,7 @@
 
 #charpanel {
     margin-left: 50%;
+    align-items: center;
 }
 
 #charpic {
@@ -58,17 +62,29 @@
 
 }
 
-#panel {
+.drops-panel  {
   width:788px;
-  color: lightgoldenrodyellow;
-  background-color: goldenrod;
-  border: solid 1px lightgoldenrodyellow;
   display: none;
   z-index: 2;
   padding: 5px;
   position:fixed;
   top:50px;
   left:0px;
+}
+
+.picPanel {
+  width: 210px;
+  float:left;
+  margin: auto;
+}
+
+.panelText {
+  width: 175px;
+  float:left;
+}
+
+#diagOpts {
+  height: 210px;
 }
 
 #phaserblock {
@@ -78,6 +94,8 @@
   z-index: 1;
 }
 
+
+/*
 #dialogContainer {
   width: 788px;
   padding: 5px;
@@ -133,4 +151,4 @@
 
 #rdialogButton {
   float:right;
-}
+} */

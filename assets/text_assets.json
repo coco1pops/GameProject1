@@ -51,9 +51,9 @@
 		      {"id": 2, "phase": 0, "effect": 2, "text": "I think you're really pretty +n.", "respSet": 2},
 		      {"id": 3, "phase": 0, "effect": 0, "text": "You seem sad.", "respSet": 2},
 		      {"id": 4, "phase": 0, "effect": 1, "text": "Do you feel cold and lonely at night?", "respSet": 3},
-		      {"id": 5, "phase": 0, "effect": 1, "text": "I so like spending time with you", "respSet": 4},
+		      {"id": 5, "phase": 1, "effect": 1, "text": "I so like spending time with you", "respSet": 4},
 		      {"id": 6, "phase": 0, "effect": 1, "text": "Can we be friends?", "respSet": 5},
-          {"id": 7, "phase": 0, "effect": 2, "text": "Were you watching me at prayers?", "respSet": 6},
+          {"id": 7, "phase": 1, "effect": 2, "text": "Were you watching me at prayers?", "respSet": 6},
           {"id": 8, "phase": 0, "effect": 0, "text": "Nice to see you again.", "respSet": 8},
           {"id": 9, "phase": 1, "effect": 3, "text": "Can I kiss you?", "respSet": 9}
         ],

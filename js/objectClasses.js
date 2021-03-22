@@ -159,7 +159,12 @@ export class NPC extends Phaser.GameObjects.PathFollower {
   getPreAmble(textAssets) {
     let prompt = "You approach " + textAssets.Level[this.npcLevel] + " " + this.npcName + ".<br>";
     prompt = prompt + "She " + textAssets.nPCAspect[this.npcRel] + ". " + textAssets.nPCPreamble[this.npcRel] + ".<br>";
-    prompt = prompt + "Relationship: " + textAssets.nPCRelationship[this.npcRel] + "<br>";
+    prompt = prompt + "Do you want to speak to " + this.npcName + "?";
+    return prompt;
+  }
+
+  getStats(textAssets) {
+    let prompt = "Relationship: " + textAssets.nPCRelationship[this.npcRel] + "<br>";
     prompt = prompt + "Attitude: " + textAssets.nPCLst[this.npcLst] + "<br>";
     prompt = prompt + "Corruption: " + textAssets.nPCCor[this.npcCor];
     return prompt;
@@ -169,17 +174,17 @@ export class NPC extends Phaser.GameObjects.PathFollower {
     let drow = "";
     const self = this;
     textAssets.playerDialog.forEach(function(entry) {
-      if (entry.phase == self.npcLst || entry.phase - 1 == self.npcLst) {
-        const nText = entry.text.replace("+n", this.npcName);
-        drow = drow + "<tr><td>" + entry.text + "</td><td>" + entry.effect + "</td><td>" + entry.respSet + "</td></tr>";
+      if (entry.phase == self.npcRel || entry.phase - 1 == self.npcRel) {
+        const nText = entry.text.replace("+n", self.npcName);
+        drow = drow + "<tr class='clickable-row'><td>" + nText + "</td><td>" + entry.effect + "</td><td>" + entry.respSet + "</td></tr>";
       }
     });
 
     let arow = "";
-    textAssets.playerActions.forEach(function(entry) {
-      if (entry.phase == self.npcLst || entry.phase - 1 == self.npcLst) {
-        const nText = entry.text.replace("+n", this.npcName);
-        arow = arow + "<tr><td>" + entry.text + "</td><td>" + entry.effect + "</td><td>" + entry.respSet + "</td></tr>";
+    textAssets.playerAction.forEach(function(entry) {
+      if (entry.phase == self.npcRel || entry.phase - 1 == self.npcRel) {
+        const nText = entry.text.replace("+n", self.npcName);
+        arow = arow + "<tr class='clickable-row'><td>" + nText + "</td><td>" + entry.effect + "</td><td>" + entry.respSet + "</td></tr>";
       }
     });
     return {
