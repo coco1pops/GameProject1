@@ -94,61 +94,13 @@
   z-index: 1;
 }
 
-
-/*
-#dialogContainer {
-  width: 788px;
-  padding: 5px;
-  position:fixed;
-  top: 360px;
-  left: 7px;
-  height: 200px;
-  display: none;
-  z-index: 2;
+.dTable thead {
+  display:table;
+  width: 100%;
 }
 
-#dialogPanel, #dialogText, #dialogButtonBar {
-
-  color: lightgoldenrodyellow;
-  background-color:goldenrod;
-  border:solid 1px lightgoldenrodyellow;
+.dTable tbody {
+    display: block;
+    height: 88px;
+    overflow: auto;
 }
-
-#dialogPanel {
-  position:relative;
-  width: 60%;
-  height: 100%;
-  margin-left:20%;
-  margin-right:20%;
-  padding: 5px;
-}
-
-#dialogText {
-  padding:5px;
-}
-
-#dialogButtonBar{
-  position:absolute;
-  bottom: 5px;
-  height: 30px;
-  padding: 5px;
-  width: 460px;
-}
-
-.dialogButton{
-  color: lightgoldenrodyellow;
-  background-color:darkgoldenrod;
-  margin: 5px;
-}
-
-#ldialogButton {
-  float:left;
-}
-
-#mdialogButton {
-  margin-left: 33%;
-}
-
-#rdialogButton {
-  float:right;
-} */

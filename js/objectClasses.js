@@ -176,7 +176,7 @@ export class NPC extends Phaser.GameObjects.PathFollower {
     textAssets.playerDialog.forEach(function(entry) {
       if (entry.phase == self.npcRel || entry.phase - 1 == self.npcRel) {
         const nText = entry.text.replace("+n", self.npcName);
-        drow = drow + "<tr class='clickable-row'><td>" + nText + "</td><td>" + entry.effect + "</td><td>" + entry.respSet + "</td></tr>";
+        drow = drow + "<tr class='clickable-row'><td>" + nText + "</td><td>" + entry.effect + "</td><td style = "display:hidden">" + entry.id + "</td></tr>";
       }
     });
 
@@ -184,7 +184,7 @@ export class NPC extends Phaser.GameObjects.PathFollower {
     textAssets.playerAction.forEach(function(entry) {
       if (entry.phase == self.npcRel || entry.phase - 1 == self.npcRel) {
         const nText = entry.text.replace("+n", self.npcName);
-        arow = arow + "<tr class='clickable-row'><td>" + nText + "</td><td>" + entry.effect + "</td><td>" + entry.respSet + "</td></tr>";
+        arow = arow + "<tr class='clickable-row'><td>" + nText + "</td><td>" + entry.effect + "</td><td style = "display:hidden">" + entry.id + "</td></tr>";
       }
     });
     return {

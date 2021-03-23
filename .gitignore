@@ -5,3 +5,5 @@ package-lock.json
 jq/
 dist/
 parcel*
+.parcel-cache/
+*.log
