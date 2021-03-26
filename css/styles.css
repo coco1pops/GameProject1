@@ -94,6 +94,24 @@
   z-index: 1;
 }
 
+#npcDiagText {
+  display:none;
+  padding-left: 10px;
+  padding-right:10px;
+  height: 210px;
+  overflow: auto;
+}
+
+.npcResp {
+  text-align: right;
+  color: red;
+}
+
+.finResp {
+  text-align: left;
+  color: lightblue;
+}
+
 .dTable thead {
   display:table;
   width: 100%;
@@ -103,4 +121,17 @@
     display: block;
     height: 88px;
     overflow: auto;
+}
+
+.dTable .dText {
+  width: 600px;
+}
+
+.a-clickable-row:hover, .d-clickable-row:hover {
+  background-color: #696969;
+
+}
+
+.highlight {
+  background-color: #DCDCDC;
 }

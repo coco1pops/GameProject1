@@ -54,27 +54,30 @@ export default class DialogClass {
     $(function() {
       $("#dialogContainer").dialog({
           autoOpen: false,
-          buttons: [ {
-            id: "bYes",
-            text: "Yes",
-            click: function() {
-              self.resp = "yes";
-              $(this).dialog("close");
-            }},
+          buttons: [{
+              id: "bcYes",
+              text: "Yes",
+              click: function() {
+                self.resp = "yes";
+                $(this).dialog("close");
+              }
+            },
             {
-            id: "bNo",
-            text: "No",
-            click: function() {
-              self.resp = "no";
-              $(this).dialog("close");
-            }},
+              id: "bcNo",
+              text: "No",
+              click: function() {
+                self.resp = "no";
+                $(this).dialog("close");
+              }
+            },
             {
-            id: "bOK",
-            text: "Ok",
-            click: function() {
-            self.resp = "no";
-              $(this).dialog("close");
-            }}
+              id: "bcOK",
+              text: "Ok",
+              click: function() {
+                self.resp = "no";
+                $(this).dialog("close");
+              }
+            }
           ],
           resizable: false,
           position: {
@@ -84,41 +87,55 @@ export default class DialogClass {
           }
         })
         .on('dialogclose', function(event) {
-         self.catchResponse(self.resp);
+          self.catchResponse(self.resp);
         });
-      });
+    });
 
-      $(function() {
-        $("#npcDialogPanel").dialog({
-            autoOpen: false,
-            buttons: [ {
-              id: "bAccept",
+    $(function() {
+      $("#npcDialogPanel").dialog({
+          autoOpen: false,
+          buttons: [{
+              id: "bnAccept",
               text: "Accept",
               click: function() {
-                self.resp = "yes";
-                $(this).dialog("close");
-              }},
-              {
-              id: "bCancel",
+                $("#npcDiagText").prepend("<p>" + self.resp.id.text + "</p>");
+                self.driver.stepOn(self, self.resp);
+              }
+            },
+            {
+              id: "bnCancel",
               text: "Cancel",
               click: function() {
                 self.resp = "no";
                 $(this).dialog("close");
-              }}
-            ],
-            resizable: false,
-            title: "Encounter",
-            position: {
-              my: "center",
-              at: "top",
-              of: "#phaserblock"
+              }
             },
-            width:790
-          })
-          .on('dialogclose', function(event) {
-           self.catchResponse(self.resp);
-          });
+            {
+              id: "bnOK",
+              text: "Ok",
+              click: function() {
+                if (self.stopFlag)
+                  {$(this).dialog("close");}
+                  else {
+                    self.driver.stepOn(self, self.resp);
+                  }
+              }
+            }
+          ],
+          resizable: false,
+          title: "Encounter",
+          position: {
+            my: "center",
+            at: "top",
+            of: "#phaserblock"
+          },
+          width: 790
+        })
+        .on('dialogclose', function(event) {
+          self.catchResponse(self.resp);
         });
+    });
+
   }
 
   catchResponse(resp) {
@@ -130,24 +147,106 @@ export default class DialogClass {
   }
 
   displayYesNo(prompt, driver) {
-    this.resp="no";
+    this.resp = "no";
     this.stopFlag = false;
     this.driver = driver;
-    $("#bOK").hide();
-    $("#bYes").show();
-    $("#bNo").show();
+    $("#bcOK").hide();
+    $("#bcYes").show();
+    $("#bcNo").show();
     $("#dialogContainer").dialog("option", "title", "Choose Option");
     $("#dialogText").html(prompt);
     $("#dialogContainer").dialog("open");
 
   }
 
-  displayAsk(opts, stats, player){
+  displayAsk(opts, stats, player, textAssets) {
+    //
+    // Clear out any left over text
+    //
+    let id = null;
+    this.resp = "no";
+    if (player.dialogStage < 2 ) $("#npcDiagText").html("");
+    $(".dTbody").empty();
+    $("#npcDiagText").hide();
+    $("#diagOpts").show();
+
+    //
+    // Iniitialise buttons
+    //
+    $("#bnOK").hide();
+    $("#bnAccept").hide();
+    $("#bnCancel").show();
+    //
+    // Load up data
+    //
     $("#dnpcstats").html(stats);
     $("#dplayerstats").html(player);
     $("#drow").append(opts.dialog);
     $("#arow").append(opts.actions);
+
+    let self = this;
+
+    $(".d-clickable-row").click(function() {
+      let row = $(this).closest('tr');
+      $(".d-clickable-row").removeClass("highlight");
+      $(".a-clickable-row").removeClass("highlight");
+      if (self.resp.id == $(row).find(".id").html() && self.resp.choice =="say") {
+        self.resp = "no";
+        $("#bnAccept").hide();
+        id = null
+      } else {
+        id = $(row).find(".id").html();
+        $(row).addClass("highlight");
+        self.resp = {
+          choice: "say",
+          id: textAssets.playerDialog.find(rw => rw.id == id)
+        };
+        $("#bnAccept").show();
+      }
+    });
+
+    $(".a-clickable-row").click(function() {
+      let row = $(this).closest('tr');
+      $(".d-clickable-row").removeClass("highlight");
+      $(".a-clickable-row").removeClass("highlight");
+      if (self.resp.id == $(row).find(".id").html() && self.resp.choice =="action") {
+        self.resp = "no";
+        $("#bnAccept").hide();
+        id = null
+      } else {
+        id = $(row).find(".id").html();
+        $(row).addClass("highlight");
+        self.resp = {
+          choice: "action",
+          id: textAssets.playerAction.find(rw => rw.id == id)
+        };
+        $("#bnAccept").show();
+      }
+    });
+
     $("#npcDialogPanel").dialog("open");
+  }
+
+  displayResult(resp) {
+    //
+    // This is called from the driver to display the response and expects the ask
+    // dialog to be active.
+    //
+    $("#bnOK").show();
+    $("#bnAccept").hide();
+    $("#bnCancel").hide();
+    $("#diagOpts").hide();
+    if (resp.score == -1) {
+      this.resp = "no";
+      this.stopFlag = true;
+    } else {
+      this.resp = "yes";
+      this.stopFlag = false;
+    }
+    let msgClass = "npcResp";
+    if (this.stopFlag) msgClass = "finResp"
+
+    $("#npcDiagText").prepend("<p class='" + msgClass +"'>"+resp.text + "</p>").show();
   }
 
   updateStats(player) {
@@ -348,9 +447,9 @@ export default class DialogClass {
   displayEndDialogue(prompt, driver) {
     this.driver = driver;
     this.stopFlag = true;
-    $("#bOK").show();
-    $("#bYes").hide();
-    $("#bNo").hide();
+    $("#bcOK").show();
+    $("#bcYes").hide();
+    $("#bcNo").hide();
 
     $("#dialogContainer").dialog("option", "title", "Confirm");
     $("#dialogText").html(prompt);

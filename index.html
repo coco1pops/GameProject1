@@ -110,6 +110,8 @@
     <div id="dnpcstats" class="panelText" >
     </div>
   </div>
+    <div id="npcDiagText" class="ui-corner-all ui-widget ui-widget-content">
+    </div>
     <div id="diagOpts">
       <ul>
         <li><a href="#dTabs-1">Say</a></li>
@@ -122,24 +124,20 @@
           <thead>
             <tr>
               <th>Say</th>
-              <th>Effect</th>
-              <th>index</th>
             </tr>
           </thead>
-          <tbody id="drow">
+          <tbody id="drow" class="dTbody">
           </tbody>
         </table>
       </div>
       <div id="dTabs-2">
-        <table id="arow" class="dTable">
+        <table id="action" class="dTable">
           <thead>
             <tr>
               <th>Action</th>
-              <th>Effect</th>
-              <th>index</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="arow" class="dTbody">
           </tbody>
         </table>
       </div>
@@ -148,11 +146,9 @@
           <thead>
             <tr>
               <th>Give</th>
-              <th>Effect</th>
-              <th>index</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="grow" class="dTbody">
           </tbody>
         </table>
       </div>

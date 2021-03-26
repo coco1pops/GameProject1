@@ -46,6 +46,14 @@
       "Enchantments": "To do",
       "walkaway": "You avert your eyes and hurry past",
       "turndown": "You shake your head and turn away",
+      "failDialog": "+n blushes, shakes her head and walks away",
+      "failRoom": "+n's eyes widen in horror. She gather her things and storms out",
+      "diagAdvance": "You feel +n has grown much closer",
+      "diagComplete": "+n is now ready to take things further",
+      "diagFailure": "+n has been unmoved by your advances",
+      "roomAdvance": "+n is starting to enjoy this. She's willing to go further",
+      "roomComplete": "+n's corruption is total. She'll do anything you ask",
+      "roomFailure" : "You didn't manage to get +n excited",
       "playerDialog":[
           {"id": 1, "phase": 0, "effect": 1, "text": "I really like you +n.", "respSet": 7},
 		      {"id": 2, "phase": 0, "effect": 2, "text": "I think you're really pretty +n.", "respSet": 2},
@@ -58,17 +66,17 @@
           {"id": 9, "phase": 1, "effect": 3, "text": "Can I kiss you?", "respSet": 9}
         ],
       "nPCResponse":[
-          {"set": 2, "responses": ["You’re embarrassing me", "<Shy smile>. You think so?", "Well you’re definitely gorgeous"]},
-          {"set": 1, "responses": ["You do? I didn’t know", "That’s a nice thing to say", "I really like you too"]},
-          {"set": 3, "responses": ["I’ve got used to it",
+          {"rset": 2, "responses": ["You’re embarrassing me", "<Shy smile>. You think so?", "Well you’re definitely gorgeous"]},
+          {"rset": 1, "responses": ["You do? I didn’t know", "That’s a nice thing to say", "I really like you too"]},
+          {"rset": 3, "responses": ["I’ve got used to it",
               "Oh yes. I sometimes miss my family","I do feel so cold and alone all the the time"]},
-          {"set": 4, "responses": ["We can’t chat for long. We need to concentrate on our duties",
+          {"rset": 4, "responses": ["We can’t chat for long. We need to concentrate on our duties",
             "Mmm. It’s nice to catch up", "I really like being with you too."]},
-          {"set": 5, "responses": ["We’re all friends here.", "Of course.", "I’d so like to be your best friend."]},
-          {"set": 6, "responses": ["No, I don’t think so.","<Cheeky smile> I might have been.","<Lowers gaze> You look so nice."]},
-          {"set": 7, "responses": ["You're embarrassing me.","Well I like you too.","<Lowers gaze> I really, really like you."]},
-          {"set": 8, "responses": ["Hello.","Nice to see you.","<Big smile> Lovely to bump into you again."]},
-          {"set": 9, "responses": ["Please, don't make me do this.","+n nods very nervously.+a:1","Oh yes! I so want this.+a:1"]}
+          {"rset": 5, "responses": ["We’re all friends here.", "Of course.", "I’d so like to be your best friend."]},
+          {"rset": 6, "responses": ["No, I don’t think so.","<Cheeky smile> I might have been.","<Lowers gaze> You look so nice."]},
+          {"rset": 7, "responses": ["You're embarrassing me.","Well I like you too.","<Lowers gaze> I really, really like you."]},
+          {"rset": 8, "responses": ["Hello.","Nice to see you.","<Big smile> Lovely to bump into you again."]},
+          {"rset": 9, "responses": ["Please, don't make me do this.","+n nods very nervously.+a:1","Oh yes! I so want this.+a:1"]}
         ],
       "playerAction":[
           {"id": 1, "phase": 1, "effect": 1, "text": "Kiss +n gently on the lips.", "respSet": 1},

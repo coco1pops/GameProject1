@@ -176,7 +176,9 @@ export class NPC extends Phaser.GameObjects.PathFollower {
     textAssets.playerDialog.forEach(function(entry) {
       if (entry.phase == self.npcRel || entry.phase - 1 == self.npcRel) {
         const nText = entry.text.replace("+n", self.npcName);
-        drow = drow + "<tr class='clickable-row'><td>" + nText + "</td><td>" + entry.effect + "</td><td style = "display:hidden">" + entry.id + "</td></tr>";
+        let col = _getColour(entry.effect);
+        drow = drow + "<tr class='d-clickable-row'><td class='dText' style ='color:" + col + "'>" +
+          nText + "</td><td style = 'display:none' class = 'id'>" + entry.id + "</td></tr>";
       }
     });
 
@@ -184,29 +186,78 @@ export class NPC extends Phaser.GameObjects.PathFollower {
     textAssets.playerAction.forEach(function(entry) {
       if (entry.phase == self.npcRel || entry.phase - 1 == self.npcRel) {
         const nText = entry.text.replace("+n", self.npcName);
-        arow = arow + "<tr class='clickable-row'><td>" + nText + "</td><td>" + entry.effect + "</td><td style = "display:hidden">" + entry.id + "</td></tr>";
+        let col = _getColour(entry.effect);
+        arow = arow + "<tr class='a-clickable-row'><td class='dText' style ='color:" + col + "'>" +
+          nText + "</td><td>" + entry.effect + "</td><td style = 'display:none' class = 'id'>" + entry.id + "</td></tr>";
       }
     });
     return {
       dialog: drow,
       actions: arow
     };
+
+    function _getColour(id) {
+      switch (id) {
+        case 0:
+          return "pink";
+        case 1:
+          return "red";
+        case 2:
+          return "darkred";
+      }
+      return "white";
+    }
     //TODO: Retrieve gift entries
   }
 
-  processFailure(setting) {
-    if (setting == "dialogue") {
+  processFailure() {
+    if (this.npcRel < 3) {
       this.npcRel--;
       if (this.npcRel < 0) this.npcRel = 0;
-      return "Dialogue failed";
+      return;
     }
     this.npcCor--;
     if (this.npcCor < 0) {
       this.npcRel--;
       this.npcCor = 0;
     }
-    return "Seduction failed";
+    return;
 
   }
 
+  advance(player, textAssets) {
+    if (this.nPCRel < 3) {
+      let success = (this.npcRel == 0 && player.score > 3) || (this.npcRel == 1 && player.score > 6)
+      success = success || (this.npcRel == 2 && player.score > 9)
+      if (success) {
+        this.npcRel++
+        if (this.npcRel == 3) {
+          let nText = textAssets.diagComplete.replace("+n", this.npcName);
+          return nText;
+        } else {
+          let nText = textAssets.diagAdvance.replace("+n", this.npcName);
+          return nText;
+        }
+      } else {
+        let nText = textAssets.diagFailure.replace("+n", this.npcName);
+        return nText;
+      }
+    } else {
+      let success = (this.npcCor < 3 && player.score > 6) || (this.npcCor < 6 && player.score > 12)
+      success = success || (this.npcCor < 12 && player.score > 18)
+      if (success) {
+        this.npcCor = this.npcCor+ player.score/2;
+        if (this.npcCor > 12 ) {
+          let nText = textAssets.roomAdvance.replace("+n", this.npcName);
+          return nText;
+        } else {
+          let nText = textAssets.roomComplete.replace("+n", this.npcName);
+          return nText;
+        }
+      } else {
+        let nText = textAssets.roomFailure.replace("+n", this.npcName);
+        return nText;
+      }
+    }
+  }
 }
