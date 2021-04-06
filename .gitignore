@@ -1,9 +1,10 @@
 .cache
 node_modules/
-*.sh
 package-lock.json
 jq/
 dist/
 parcel*
 .parcel-cache/
 *.log
+db/db.xlsx
+db/d*.json

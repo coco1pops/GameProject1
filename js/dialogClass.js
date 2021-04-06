@@ -2,6 +2,7 @@ const $ = require("jquery");
 window.$ = window.jQuery = $;
 require("jquery-ui-bundle");
 require("../staticjs/jquery.titlesequence.js");
+var titles = require ("../assets/dialogs.json");
 
 export default class DialogClass {
   constructor() {
@@ -159,13 +160,14 @@ export default class DialogClass {
 
   }
 
-  displayAsk(opts, stats, player, textAssets) {
+  displayAsk(opts, stats, player, textAssets, stage) {
     //
     // Clear out any left over text
     //
     let id = null;
     this.resp = "no";
-    if (player.dialogStage < 2 ) $("#npcDiagText").html("");
+    if (stage < 3 ) $("#npcDiagText").empty();
+
     $(".dTbody").empty();
     $("#npcDiagText").hide();
     $("#diagOpts").show();
@@ -283,11 +285,8 @@ export default class DialogClass {
 
   //TODO display the title dialogue
   displayTitles() {
-    $.getJSON("assets/dialogs.json", function(json) {
-      _displayTitles(json.titles);
-    }).fail(function() {
-      console.log("Cannot Read titles JSON File");
-    });
+
+      _displayTitles(titles.titles);
 
     function _displayTitles(titles) {
 

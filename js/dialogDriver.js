@@ -36,11 +36,7 @@
         case 3:
         case 5: { // Ask section
           if (response == "no") {
-            qDialog.displayResult(
-              {
-                score: -1,
-                text: this.textAssets.walkaway
-              });
+            this.fin("true",this.textAssets.walkaway, qDialog);
             break;
           }
 
@@ -51,7 +47,7 @@
             "Turn: " + (this.player.dialogStage+1)/2 + "<br>" +
             "Score: " + this.player.score;
 
-          qDialog.displayAsk(opts, stats, playerText, this.textAssets);
+          qDialog.displayAsk(opts, stats, playerText, this.textAssets, this.player.dialogStage);
           this.player.dialogStage++;
           break;
         }
@@ -60,12 +56,9 @@
         case 4:
         case 6: { // Catch result of Ask
           if (response == "no") {
-            qDialog.displayResult(
-              {
-                score: -1,
-                text: this.textAssets.turndown
-              });
+            this.fin("true",this.textAssets.turndown, qDialog);
             break;
+
           }
           // The player has chosen to continue and selected an option in
           // response.
@@ -81,10 +74,9 @@
           else
             result = getRoomResponse(response, self);
 
-          console.log(result);
           this.player.score = this.player.score + result.score;
-          this.player.dialogStage++;
           qDialog.displayResult(result);
+          this.player.dialogStage++;
           break;
 
         }
@@ -107,6 +99,8 @@
       function getDiagResponse(response, self) {
         if (response.effect > self.nPC.npcLst) {  // Player over-reached
           self.nPC.processFailure();
+          this.player.dialogStage = 0;
+          this.player.score = 0;
           return {
             score: -1,
             text: self.textAssets.failDialog
@@ -114,8 +108,8 @@
         }
         // Passed so calculate score
 
-        const result = (self.nPC.npcLst + 1) * (self.nPC.npclst == response.id.effect) +
-          self.nPC.npcLst * (self.nPC.npclst - 1 == response.id.effect);
+        const result = (self.nPC.npcLst + 1) * (self.nPC.npcLst == response.id.effect) +
+          self.nPC.npcLst * (self.nPC.npcLst - 1 == response.id.effect);
 
         let resps = null;
         if (response.choice == "say") {
@@ -136,6 +130,8 @@
       function getRoomResponse(response, self) {
         if (response.cor - self.player.skill > self.nPC.npcCor) {
           self.nPC.processFailure();
+          this.player.dialogStage = 0;
+          this.player.score = 0;
           return {
             score: -1,
             text: self.textAssets.failRoom

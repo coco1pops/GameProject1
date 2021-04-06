@@ -188,7 +188,7 @@ export class NPC extends Phaser.GameObjects.PathFollower {
         const nText = entry.text.replace("+n", self.npcName);
         let col = _getColour(entry.effect);
         arow = arow + "<tr class='a-clickable-row'><td class='dText' style ='color:" + col + "'>" +
-          nText + "</td><td>" + entry.effect + "</td><td style = 'display:none' class = 'id'>" + entry.id + "</td></tr>";
+          nText + "</td><td style = 'display:none' class = 'id'>" + entry.id + "</td></tr>";
       }
     });
     return {

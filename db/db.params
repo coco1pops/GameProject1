@@ -1,0 +1,7 @@
+{"sourceFile": "db.xlsx",
+ "header": {"rows":1}, 
+ "sheets": ["playerDialog","nPCResponse","playerAction","nPCAction"],
+ "columnToKey": {
+        "*": "{{columnHeader}}"
+    }
+}

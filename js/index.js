@@ -9,6 +9,8 @@ import {DialogDriver, ContainerDriver} from "./dialogDriver.js";
 
 import setAnims from "./anims.js";
 
+var textAssets = require("../assets/textAssets.json");
+
 // TODO: Add this bit to the header maybe and set up titles and menu
 
 qDialog.displayTitles();
@@ -60,7 +62,7 @@ function preload() {
   //  https://labs.phaser.io/view.html?src=src/animation/single%20sprite%20sheet.js
   this.load.atlas("atlas", "../assets/new_atlas.png", "assets/new_atlas.json");
 
-  this.load.json('textData', '../assets/text_assets.json');
+  //this.load.json('textData', '../assets/text_assets.json');
 
 }
 
@@ -84,7 +86,7 @@ function create() {
   const belowLayer = map.createStaticLayer("Base Layer", tileset, 0, 0);
   // TODO: Add more layers. In particular above layer
 
-  const textAssets = this.cache.json.get('textData');
+  //const textAssets = this.cache.json.get('textData');
 
   // Now create the various Objects. The process below creates sprites with the
   // key representing the sprite setup in the preload function.

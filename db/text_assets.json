@@ -1,0 +1,57 @@
+  {
+    "containers":[
+      {"key": 1,
+        "name": "Green Bush",
+        "description": "A large green bush with thick leathery leaves",
+        "search": "You search through the dark slimy undergrowth and find"
+      },
+      {"key": 2,
+        "name": "Brown Bush",
+        "description": "A dry brown bush with thickly packed spiked branches",
+        "search": "You brace yourself and carefully pull apart the spiky twigs and find"
+      }
+    ],
+    "inventory": [{"key": 1,
+          "name": "test name 1",
+          "description": "test desc 1",
+          "sed": 0,
+          "sap": 0,
+          "skill": 0
+        },
+        { "key": 2,
+          "name": "test name 2",
+          "description": "test desc 2",
+          "sed": 1,
+          "sap": 1,
+          "skill": 1
+        }
+      ],
+      "nPCRelationship":["Hostile", "Friendly", "Very Friendly",
+      "Lover"],
+      "nPCAspect": ["tries to ignore you",
+        "gives you a slight smile",
+        "is very pleased to see you",
+        "is flushed and hungry for you"],
+      "nPCPreamble": ["You approach her cautiously",
+        "You greet her and approach",
+        "You hurry towards her. She's waiting for you",
+        "You know she will go with you if you ask"],
+      "nPCLst": ["Cold","Interested","Willing","Keen","Sex Obsessed"],
+      "nPCCor": ["Holy", "Pure", "Tempted", "Corrupted", "Depraved"],
+      "Level":["Postulant","Novice","Sister", "Canoness", "Reverend Mother"],
+      "ObjectTypes":["Rosary", "Book", "Cross", "Chalice", "Censor"],
+      "Saints": ["Ursula", "Nymphodora", "Euphemia", "Pulcheria", "Liutberga",
+                "Dorothea", "Gertrude"],
+      "ObjectLevel":["","Holy","Most Holy"],
+      "Enchantments": "To do",
+      "walkaway": "You avert your eyes and hurry past",
+      "turndown": "You shake your head and turn away",
+      "failDialog": "+n blushes, shakes her head and walks away",
+      "failRoom": "+n's eyes widen in horror. She gather her things and storms out",
+      "diagAdvance": "You feel +n has grown much closer",
+      "diagComplete": "+n is now ready to take things further",
+      "diagFailure": "+n has been unmoved by your advances",
+      "roomAdvance": "+n is starting to enjoy this. She's willing to go further",
+      "roomComplete": "+n's corruption is total. She'll do anything you ask",
+      "roomFailure" : "You didn't manage to get +n excited"
+    }

@@ -1,0 +1,57 @@
+  {
+    "containers":[
+      {"key": 1,
+        "name": "Green Bush",
+        "description": "A large green bush with thick leathery leaves",
+        "search": "You search through the dark slimy undergrowth and find"
+      },
+      {"key": 2,
+        "name": "Brown Bush",
+        "description": "A dry brown bush with thickly packed spiked branches",
+        "search": "You brace yourself and carefully pull apart the spiky twigs and find"
+      }
+    ],
+    "inventory": [{"key": 1,
+          "name": "test name 1",
+          "description": "test desc 1",
+          "sed": 0,
+          "sap": 0,
+          "skill": 0
+        },
+        { "key": 2,
+          "name": "test name 2",
+          "description": "test desc 2",
+          "sed": 1,
+          "sap": 1,
+          "skill": 1
+        }
+      ],
+      "nPCRelationship":["Hostile", "Friendly", "Very Friendly",
+      "Lover"],
+      "nPCAspect": ["tries to ignore you",
+        "gives you a slight smile",
+        "is very pleased to see you",
+        "is flushed and hungry for you"],
+      "nPCPreamble": ["You approach her cautiously",
+        "You greet her and approach",
+        "You hurry towards her. She's waiting for you",
+        "You know she will go with you if you ask"],
+      "nPCLst": ["Cold","Interested","Willing","Keen","Sex Obsessed"],
+      "nPCCor": ["Holy", "Pure", "Tempted", "Corrupted", "Depraved"],
+      "Level":["Postulant","Novice","Sister", "Canoness", "Reverend Mother"],
+      "ObjectTypes":["Rosary", "Book", "Cross", "Chalice", "Censor"],
+      "Saints": ["Ursula", "Nymphodora", "Euphemia", "Pulcheria", "Liutberga",
+                "Dorothea", "Gertrude"],
+      "ObjectLevel":["","Holy","Most Holy"],
+      "Enchantments": "To do",
+      "walkaway": "You avert your eyes and hurry past",
+      "turndown": "You shake your head and turn away",
+      "failDialog": "+n blushes, shakes her head and walks away",
+      "failRoom": "+n's eyes widen in horror. She gather her things and storms out",
+      "diagAdvance": "You feel +n has grown much closer",
+      "diagComplete": "+n is now ready to take things further",
+      "diagFailure": "+n has been unmoved by your advances",
+      "roomAdvance": "+n is starting to enjoy this. She's willing to go further",
+      "roomComplete": "+n's corruption is total. She'll do anything you ask",
+      "roomFailure" : "You didn't manage to get +n excited"
+,"playerDialog":[{"id":1,"phase":0,"effect":1,"text":"I really like you +n.","respSet":7},{"id":2,"phase":0,"effect":2,"text":"I think you're really pretty +n.","respSet":2},{"id":3,"phase":0,"effect":0,"text":"You seem sad.","respSet":2},{"id":4,"phase":0,"effect":1,"text":"Do you feel cold and lonely at night?","respSet":3},{"id":5,"phase":1,"effect":1,"text":"I so like spending time with you","respSet":4},{"id":6,"phase":0,"effect":1,"text":"Can we be friends?","respSet":5},{"id":7,"phase":1,"effect":2,"text":"Were you watching me at prayers?","respSet":6},{"id":8,"phase":0,"effect":0,"text":"Nice to see you again.","respSet":8},{"id":9,"phase":1,"effect":3,"text":"Can I kiss you?","respSet":9},{"id":10,"phase":2,"effect":0,"text":"You’re looking nice today","respSet":10},{"id":11,"phase":2,"effect":0,"text":"Would you like to hold my hand?","respSet":11},{"id":12,"phase":2,"effect":0,"text":"So good to have a friend here.","respSet":12},{"id":13,"phase":2,"effect":1,"text":"I know it’s not allowed but would you like to be my girlfriend?","respSet":13},{"id":14,"phase":2,"effect":1,"text":"Do you think two girls can love each other?","respSet":14},{"id":15,"phase":2,"effect":1,"text":"Have you ever thought of being with another girl?","respSet":15},{"id":16,"phase":2,"effect":1,"text":"Please hold me +n. I’m feeling so lonely.","respSet":16},{"id":17,"phase":2,"effect":2,"text":"I’d so like to see you without your habit.","respSet":17},{"id":18,"phase":2,"effect":2,"text":"Would you like to come back to my cell?","respSet":18},{"id":19,"phase":2,"effect":2,"text":"I want to touch you, to please you, to make you happy.","respSet":19},{"id":20,"phase":2,"effect":2,"text":"Would you like to kiss me? Properly. On the lips.","respSet":20},{"id":21,"phase":2,"effect":2,"text":"You make me feel all tingly between my legs.","respSet":21}],"nPCResponse":[{"rset":2,"responses":["You’re embarrassing me","<Shy smile>. You think so?","Well you’re definitely gorgeous"]},{"rset":1,"responses":["You do? I didn’t know","That’s a nice thing to say","I really like you too"]},{"rset":3,"responses":["I’ve got used to it","Oh yes. I sometimes miss my family","I do feel so cold and alone all the the time"]},{"rset":4,"responses":["We can’t chat for long. We need to concentrate on our duties","Mmm. It’s nice to catch up","I really like being with you too."]},{"rset":5,"responses":["We’re all friends here.","Of course.","I’d so like to be your best friend."]},{"rset":6,"responses":["No, I don’t think so.","<Cheeky smile> I might have been.","<Lowers gaze> You look so nice."]},{"rset":7,"responses":["You're embarrassing me.","Well I like you too.","<Lowers gaze> I really, really like you."]},{"rset":8,"responses":["Hello.","Nice to see you.","<Big smile> Lovely to bump into you again."]},{"rset":9,"responses":["Please, don't make me do this.","+n nods very nervously.+a:1","Oh yes! I so want this.+a:1"]},{"rset":10,"responses":["Low Resp 10","Mod Resp 10","High Resp 10"]},{"rset":11,"responses":["Low Resp 11","Mid Resp 11","High Resp 11"]}],"playerAction":[{"id":1,"phase":1,"effect":1,"text":"Kiss +n gently on the lips.","respSet":1},{"id":2,"phase":0,"effect":0,"text":"Hug +n.","respSet":2},{"id":3,"phase":1,"effect":1,"text":"Squeeze +n's bum.","respSet":3},{"id":4,"phase":1,"effect":1,"text":"Nibble +n's ear.","respSet":4},{"id":5,"phase":1,"effect":1,"text":"Kiss +n's neck.","respSet":4},{"id":6,"phase":1,"effect":1,"text":"Kiss +n with open mouths.","respSet":5},{"id":7,"phase":1,"effect":1,"text":"Kiss +n with tongues.","respSet":5},{"id":8,"phase":1,"effect":1,"text":"Caress +n's breast.","respSet":6},{"id":9,"phase":0,"effect":2,"text":"Stroke +n's cheek","respSet":4},{"id":10,"phase":0,"effect":2,"text":"Tidy a strand of +n's hair behind her ear.","respSet":1},{"id":11,"phase":0,"effect":1,"text":"Take +n's hand and squeeze it.","respSet":1},{"id":12,"phase":0,"effect":1,"text":"Stroke +n's arm","respSet":1}],"nPCAction":[{"rset":1,"responses":["+n turns her head away in disgust","+n shuts her eyes and doesn't resist","+n's lips meet yours in a soft kiss"]},{"rset":2,"responses":["+n does not respond and looks at you in horror","+n accepts your embrace, her hands slipping round your back.","+n hugs you tightly. You can feel the warmth of her body against your own"]},{"rset":3,"responses":["+n slaps your hand in horror","+n smiles shyly.","+n grins broadly."]},{"rset":4,"responses":["+n cries ugh and jumps back","You feel her start but she doesn't pull away","+n's eyes flicker slightly as she enjoys the attention"]},{"rset":5,"responses":["+n pulls away, shaking her head.","+n tenses up. She is very nervous.","+n kisses back hungrily"]},{"rset":6,"responses":["+n pulls away and slaps your hand","+n lets you fondle her","With a little moan, +n cups your breast and caresses it gently"]}]}

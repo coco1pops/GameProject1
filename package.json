@@ -16,7 +16,7 @@
   "staticFiles": {
     "staticPath": {
       "staticPath": "assets",
-      "excludeGlob": "assets/*.+!(json)",
+      "excludeGlob": "assets/+(!T)*.+!(json)",
       "staticOutDir": "assets"
     }
   },
@@ -27,6 +27,7 @@
     "phaser": "^3.53.1"
   },
   "dependencies": {
+    "assets": "^3.0.1",
     "jquery-ui-bundle": "^1.12.1-migrate",
     "parcel": "^1.12.3",
     "parcel-plugin-static-files-copy": "^2.6.0"
