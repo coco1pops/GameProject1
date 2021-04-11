@@ -1,16 +1,4 @@
   {
-    "containers":[
-      {"key": 1,
-        "name": "Green Bush",
-        "description": "A large green bush with thick leathery leaves",
-        "search": "You search through the dark slimy undergrowth and find"
-      },
-      {"key": 2,
-        "name": "Brown Bush",
-        "description": "A dry brown bush with thickly packed spiked branches",
-        "search": "You brace yourself and carefully pull apart the spiky twigs and find"
-      }
-    ],
     "inventory": [{"key": 1,
           "name": "test name 1",
           "description": "test desc 1",
@@ -53,5 +41,6 @@
       "diagFailure": "+n has been unmoved by your advances",
       "roomAdvance": "+n is starting to enjoy this. She's willing to go further",
       "roomComplete": "+n's corruption is total. She'll do anything you ask",
-      "roomFailure" : "You didn't manage to get +n excited"
+      "roomFailure" : "You didn't manage to get +n excited",
+      "diagBored" : "+n looks disappointed. She wants more."
     }

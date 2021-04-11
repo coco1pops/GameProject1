@@ -10,6 +10,7 @@ import {DialogDriver, ContainerDriver} from "./dialogDriver.js";
 import setAnims from "./anims.js";
 
 var textAssets = require("../assets/textAssets.json");
+var sceneList = require("../assets/scenes.json");
 
 // TODO: Add this bit to the header maybe and set up titles and menu
 
@@ -41,19 +42,26 @@ const config = {
 
 const game = new Phaser.Game(config);
 let controls;
+let sceneix = 0;
+let objLoader = [];
 let showDebug = true; // test to see if this disables the debug view
 
 function preload() {
-  this.load.image("tiles", "../assets/tmw_desert_spacing.png");
-  this.load.tilemapTiledJSON("map", "../assets/TiledMap1.json");
-  this.load.spritesheet("gbush", "../assets/green_bush.png", {
-    frameWidth: 32,
-    frameHeight: 32
-  });
-  this.load.spritesheet("bbush", "../assets/brown_bush.png", {
-    frameWidth: 32,
-    frameHeight: 32
-  });
+  let fi = "../assets/" + sceneList.Scenes[sceneix].Image;
+  this.load.image("tiles", fi);
+  fi = "../assets/" + sceneList.Scenes[sceneix].TiledMap;
+  this.load.tilemapTiledJSON("map", fi);
+
+  let self = this;
+  let objList = sceneList.Objects.filter(obj=> obj.Scene == sceneList.Scenes[sceneix].Scene);
+  objList.forEach(obj => {
+    fi = "../assets/" + obj.File;
+    self.load.spritesheet(obj.Key,fi, {
+      frameWidth: obj.frameWidth, frameHeight: obj.frameHeight
+    });
+    let li = {name: obj.Name, key: obj.Key, classType: Container};
+    objLoader.push(li);
+  })
 
   // An atlas is a way to pack multiple images together into one texture. I'm using it to load all
   // the player animations (walking left, walking right, etc.) in one image. For more info see:
@@ -98,17 +106,7 @@ function create() {
   // (further params required to call)
   // classType extends sprite
 
-  var containers = map.createFromObjects("Object Layer", [{
-      name: "Green Bush",
-      key: "gbush",
-      classType: Container
-    },
-    {
-      name: "Brown Bush",
-      key: "bbush",
-      classType: Container
-    }
-  ]);
+  var containers = map.createFromObjects("Object Layer", objLoader);
 
   // You need to add physics to the sprites so they can interact with the
   // player.
@@ -119,7 +117,7 @@ function create() {
     // currently this is only objects. Add additional text
     // from the text assets and enable the sprites
     container.extractData(textAssets);
-    container.setText(textAssets);
+    container.setText(sceneList);
     this.physics.world.enable(container);
   });
 

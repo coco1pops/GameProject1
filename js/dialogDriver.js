@@ -39,15 +39,12 @@
             this.fin("true",this.textAssets.walkaway, qDialog);
             break;
           }
+          qDialog.displaynPCDialogPlayer(this.player);
 
           const opts = this.nPC.getOpts(this.textAssets);
           const stats = this.nPC.getStats(this.textAssets);
 
-          const playerText = "Name: " + this.player.name + "<br>" +
-            "Turn: " + (this.player.dialogStage+1)/2 + "<br>" +
-            "Score: " + this.player.score;
-
-          qDialog.displayAsk(opts, stats, playerText, this.textAssets, this.player.dialogStage);
+          qDialog.displayAsk(opts, stats, this.textAssets, this.player.dialogStage);
           this.player.dialogStage++;
           break;
         }
@@ -75,6 +72,7 @@
             result = getRoomResponse(response, self);
 
           this.player.score = this.player.score + result.score;
+          qDialog.displaynPCDialogPlayer(this.player);
           qDialog.displayResult(result);
           this.player.dialogStage++;
           break;
@@ -106,10 +104,15 @@
             text: self.textAssets.failDialog
           };
         }
-        // Passed so calculate score
 
-        const result = (self.nPC.npcLst + 1) * (self.nPC.npcLst == response.id.effect) +
-          self.nPC.npcLst * (self.nPC.npcLst - 1 == response.id.effect);
+        const result = self.nPC.calculateDialogResponse(response);
+
+        if (result.ix == -1) {
+          return {
+            score: 0,
+            text: self.textAssets.diagBored.replace("+n", self.nPC.npcName)
+          }
+        }
 
         let resps = null;
         if (response.choice == "say") {
@@ -119,10 +122,9 @@
           resps = self.textAssets.nPCAction.find(rs => rs.rset == response.id.respSet);
         }
 
-        console.log(resps);
-        const nText = resps.responses[result].replace("+n", self.nPC.npcName);
+        const nText = resps.responses[result.ix].replace("+n", self.nPC.npcName);
         return {
-          score: result,
+          score: result.res,
           text: nText
         };
       }

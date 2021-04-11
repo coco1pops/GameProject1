@@ -21,8 +21,8 @@ export class Container extends Phaser.GameObjects.Sprite {
     }
   }
 
-  setText(textAssets) {
-    let contDets = textAssets.containers.find(o => o.name == this.name);
+  setText(sceneList) {
+    let contDets = sceneList.Containers.find(o => o.name == this.name);
     this.description = contDets.description;
     this.search = contDets.search;
   }
@@ -123,7 +123,7 @@ export class NPC extends Phaser.GameObjects.PathFollower {
 
   animate() {
 
-    let dir = "left";
+    let dir = "down";
     if (this.pathDelta) {
       let x = this.pathDelta.x;
       let y = this.pathDelta.y;
@@ -135,18 +135,17 @@ export class NPC extends Phaser.GameObjects.PathFollower {
         if (y > 0) dir = "down";
         else if (y < 0) dir = "up";
       }
-    }
-    if (dir == "left") {
-      this.anims.play("char2-left-walk", true);
-    } else if (dir == "right") {
-      this.anims.play("char2-right-walk", true);
-    } else if (dir == "up") {
-      this.anims.play("char2-back-walk", true);
-    } else if (dir == "down") {
-      this.anims.play("char2-front-walk", true);
+      if (dir == "left") {
+        this.anims.play("char2-left-walk", true);
+      } else if (dir == "right") {
+        this.anims.play("char2-right-walk", true);
+      } else if (dir == "up") {
+        this.anims.play("char2-back-walk", true);
+      } else if (dir == "down") {
+        this.anims.play("char2-front-walk", true);
+      }
     } else {
       this.anims.stop();
-
     }
 
   }
@@ -210,6 +209,24 @@ export class NPC extends Phaser.GameObjects.PathFollower {
     //TODO: Retrieve gift entries
   }
 
+  calculateDialogResponse(response) {
+    if (response.id.effect < this.npcLst - 1) {
+      return {
+        res: 0,
+        ix: -1
+      }
+    }
+
+    const ix = 2 * (this.npcLst == response.id.effect) + (this.npcLst - 1 == response.id.effect)
+    const res = (this.npcLst + 1) * (this.npcLst == response.id.effect) +
+      this.npcLst * (this.npcLst - 1 == response.id.effect);
+
+    return {
+      res: res,
+      ix: ix
+    };
+  }
+
   processFailure() {
     if (this.npcRel < 3) {
       this.npcRel--;
@@ -246,8 +263,8 @@ export class NPC extends Phaser.GameObjects.PathFollower {
       let success = (this.npcCor < 3 && player.score > 6) || (this.npcCor < 6 && player.score > 12)
       success = success || (this.npcCor < 12 && player.score > 18)
       if (success) {
-        this.npcCor = this.npcCor+ player.score/2;
-        if (this.npcCor > 12 ) {
+        this.npcCor = this.npcCor + player.score / 2;
+        if (this.npcCor > 12) {
           let nText = textAssets.roomAdvance.replace("+n", this.npcName);
           return nText;
         } else {

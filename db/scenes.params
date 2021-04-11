@@ -1,0 +1,7 @@
+{"sourceFile": "scenes.xlsx",
+ "header": {"rows":1},
+ "sheets": ["Scenes","Objects","Containers"],
+ "columnToKey": {
+        "*": "{{columnHeader}}"
+    }
+}

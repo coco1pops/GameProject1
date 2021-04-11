@@ -2,7 +2,7 @@ const $ = require("jquery");
 window.$ = window.jQuery = $;
 require("jquery-ui-bundle");
 require("../staticjs/jquery.titlesequence.js");
-var titles = require ("../assets/dialogs.json");
+var titles = require("../assets/dialogs.json");
 
 export default class DialogClass {
   constructor() {
@@ -13,6 +13,7 @@ export default class DialogClass {
     this.resp = "no";
     this.driver = null;
     this.stopFlag = true;
+    this.scene = null;
 
     const self = this;
 
@@ -99,7 +100,7 @@ export default class DialogClass {
               id: "bnAccept",
               text: "Accept",
               click: function() {
-                $("#npcDiagText").prepend("<p>" + self.resp.id.text + "</p>");
+                $("#npcDiagText").prepend("<p>" + self.resp.text + "</p>");
                 self.driver.stepOn(self, self.resp);
               }
             },
@@ -115,11 +116,11 @@ export default class DialogClass {
               id: "bnOK",
               text: "Ok",
               click: function() {
-                if (self.stopFlag)
-                  {$(this).dialog("close");}
-                  else {
-                    self.driver.stepOn(self, self.resp);
-                  }
+                if (self.stopFlag) {
+                  $(this).dialog("close");
+                } else {
+                  self.driver.stepOn(self, self.resp);
+                }
               }
             }
           ],
@@ -160,13 +161,13 @@ export default class DialogClass {
 
   }
 
-  displayAsk(opts, stats, player, textAssets, stage) {
+  displayAsk(opts, stats, textAssets, stage) {
     //
     // Clear out any left over text
     //
     let id = null;
     this.resp = "no";
-    if (stage < 3 ) $("#npcDiagText").empty();
+    if (stage < 3) $("#npcDiagText").empty();
 
     $(".dTbody").empty();
     $("#npcDiagText").hide();
@@ -182,7 +183,7 @@ export default class DialogClass {
     // Load up data
     //
     $("#dnpcstats").html(stats);
-    $("#dplayerstats").html(player);
+
     $("#drow").append(opts.dialog);
     $("#arow").append(opts.actions);
 
@@ -192,7 +193,7 @@ export default class DialogClass {
       let row = $(this).closest('tr');
       $(".d-clickable-row").removeClass("highlight");
       $(".a-clickable-row").removeClass("highlight");
-      if (self.resp.id == $(row).find(".id").html() && self.resp.choice =="say") {
+      if (self.resp.id == $(row).find(".id").html() && self.resp.choice == "say") {
         self.resp = "no";
         $("#bnAccept").hide();
         id = null
@@ -201,6 +202,7 @@ export default class DialogClass {
         $(row).addClass("highlight");
         self.resp = {
           choice: "say",
+          text: $(row).find(".dText").html(),
           id: textAssets.playerDialog.find(rw => rw.id == id)
         };
         $("#bnAccept").show();
@@ -211,7 +213,7 @@ export default class DialogClass {
       let row = $(this).closest('tr');
       $(".d-clickable-row").removeClass("highlight");
       $(".a-clickable-row").removeClass("highlight");
-      if (self.resp.id == $(row).find(".id").html() && self.resp.choice =="action") {
+      if (self.resp.id == $(row).find(".id").html() && self.resp.choice == "action") {
         self.resp = "no";
         $("#bnAccept").hide();
         id = null
@@ -220,6 +222,7 @@ export default class DialogClass {
         $(row).addClass("highlight");
         self.resp = {
           choice: "action",
+          text: $(row).find(".dText").html(),
           id: textAssets.playerAction.find(rw => rw.id == id)
         };
         $("#bnAccept").show();
@@ -248,7 +251,7 @@ export default class DialogClass {
     let msgClass = "npcResp";
     if (this.stopFlag) msgClass = "finResp"
 
-    $("#npcDiagText").prepend("<p class='" + msgClass +"'>"+resp.text + "</p>").show();
+    $("#npcDiagText").prepend("<p class='" + msgClass + "'>" + resp.text + "</p>").show();
   }
 
   updateStats(player) {
@@ -286,7 +289,7 @@ export default class DialogClass {
   //TODO display the title dialogue
   displayTitles() {
 
-      _displayTitles(titles.titles);
+    _displayTitles(titles.titles);
 
     function _displayTitles(titles) {
 
@@ -454,6 +457,14 @@ export default class DialogClass {
     $("#dialogText").html(prompt);
     $("#dialogContainer").dialog("open");
 
+  }
+  displaynPCDialogPlayer(player) {
+    let turn = (player.dialogStage + 1)/2;
+    if (!(player.dialogStage % 2)) turn += 0.5;
+    const playerText = "Name: " + player.name + "<br>" +
+      "Turn: " + turn + "<br>" +
+      "Score: " + player.score;
+    $("#dplayerstats").html(playerText);
   }
 
 }
