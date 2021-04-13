@@ -3,9 +3,16 @@ import Phaser from "phaser";
 import DialogClass from "./dialogClass.js";
 const qDialog = new DialogClass();
 
-import {Container, Player, NPC} from "./objectClasses.js";
+import {
+  Container,
+  Player,
+  NPC
+} from "./objectClasses.js";
 
-import {DialogDriver, ContainerDriver} from "./dialogDriver.js";
+import {
+  DialogDriver,
+  ContainerDriver
+} from "./dialogDriver.js";
 
 import setAnims from "./anims.js";
 
@@ -53,13 +60,18 @@ function preload() {
   this.load.tilemapTiledJSON("map", fi);
 
   let self = this;
-  let objList = sceneList.Objects.filter(obj=> obj.Scene == sceneList.Scenes[sceneix].Scene);
+  let objList = sceneList.Objects.filter(obj => obj.Scene == sceneList.Scenes[sceneix].Scene);
   objList.forEach(obj => {
     fi = "../assets/" + obj.File;
-    self.load.spritesheet(obj.Key,fi, {
-      frameWidth: obj.frameWidth, frameHeight: obj.frameHeight
+    self.load.spritesheet(obj.Key, fi, {
+      frameWidth: obj.frameWidth,
+      frameHeight: obj.frameHeight
     });
-    let li = {name: obj.Name, key: obj.Key, classType: Container};
+    let li = {
+      name: obj.Name,
+      key: obj.Key,
+      classType: Container
+    };
     objLoader.push(li);
   })
 
@@ -70,7 +82,9 @@ function preload() {
   //  https://labs.phaser.io/view.html?src=src/animation/single%20sprite%20sheet.js
   this.load.atlas("atlas", "../assets/new_atlas.png", "assets/new_atlas.json");
 
-  //this.load.json('textData', '../assets/text_assets.json');
+  //Add the scene to the dialogue class so it can pause and resume
+
+  qDialog.scene = this.scene;
 
 }
 
@@ -204,48 +218,44 @@ function create() {
   });
 
   var dialogEmitter = new Phaser.Events.EventEmitter();
-  qDialog.emitter=dialogEmitter;
+  qDialog.emitter = dialogEmitter;
   dialogEmitter.addListener("finCon", _catchFin);
   dialogEmitter.addListener("finNPC", _catchNPC);
 
   function _collideContainer(player, container) {
-    // TODO Pause Scene might be better
-    player.body.setVelocity(0);
-    player.body.enable = false;
-//    this.scene.pause();
+
+    pauseScene(player);
     const cd = new ContainerDriver();
     cd.init(player, container, dialogEmitter);
     cd.stepOn(qDialog, textAssets, "n");
   }
 
-  function _catchFin(detail){
+  function _catchFin(detail) {
     detail = null;
-    player.body.enable = true;
+    resumeScene(player);
   }
 
-  function _catchNPC(detail){
-      const timedEvent = detail.nPC.scene.time.delayedCall(6000, detail.nPC.onEvent, [], detail.nPC);
-      detail = null;
-    //  player.scene.scene.resume();
-      player.body.enable = true;
-    }
-
-
-  function _collideNPC(player,nPC) {
+  function _collideNPC(player, nPC) {
     // disable player and nPC
     // call plugin init (qDialog player, nPC, textAssets)
     // from here flow switches between plugin and qDialog
-    /* qDialog.nPCDialog(player, nPC, textAssets); */
 
-    player.body.setVelocity(0);
-    nPC.body.enable = false;
     nPC.pauseFollow();
     nPC.setActive(false);
+    nPC.body.enable = false;
+    pauseScene(player);
 
     const dd = new DialogDriver();
 
     dd.init(player, nPC, dialogEmitter, textAssets);
     dd.stepOn(qDialog, "n");
+  }
+
+  function _catchNPC(detail) {
+    const timedEvent = detail.nPC.scene.time.delayedCall(6000, detail.nPC.onEvent, [], detail.nPC);
+    detail = null;
+    //  player.scene.scene.resume();
+    resumeScene(player);
   }
 
 }
@@ -296,4 +306,15 @@ function update(time, delta) {
   nPCs.forEach(nPC => {
     nPC.animate();
   });
+}
+
+function pauseScene(player) {
+  player.body.enable = false;
+  player.scene.scene.pause();
+}
+
+function resumeScene(player) {
+  player.scene.scene.resume();
+  player.body.setVelocity(0);
+  player.body.enable = true;
 }

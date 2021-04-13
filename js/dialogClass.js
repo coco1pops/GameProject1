@@ -22,10 +22,12 @@ export default class DialogClass {
       $("#status").click(function() {
         if (this.status) {
           this.status = false;
+          self.scene.resume();
           $("#panel").slideUp("slow");
           $("#inventory").button("enable");
         } else {
           this.status = true;
+          self.scene.pause();
           $("#panel").slideDown("slow");
           $("#inventory").button("disable");
         }
@@ -35,10 +37,12 @@ export default class DialogClass {
       $("#inventory").click(function() {
         if (this.inventory) {
           this.inventory = false;
+          self.scene.resume();
           $("#invPanel").slideUp("slow");
           $("#status").button("enable");
         } else {
           this.inventory = true;
+          self.scene.pause();
           $("#invPanel").slideDown("slow");
           $("#status").button("disable");
         }

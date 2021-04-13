@@ -124,7 +124,7 @@ export class NPC extends Phaser.GameObjects.PathFollower {
   animate() {
 
     let dir = "down";
-    if (this.pathDelta) {
+    if (this.pathDelta && this.npcPath) {
       let x = this.pathDelta.x;
       let y = this.pathDelta.y;
 
@@ -150,8 +150,10 @@ export class NPC extends Phaser.GameObjects.PathFollower {
 
   }
   onEvent() {
+    this.body.setVelocity(0);
     this.body.enable = true;
-    this.resumeFollow();
+
+    if (this.npcPath) this.resumeFollow();
     this.setActive(true);
   }
 
