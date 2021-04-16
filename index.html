@@ -49,11 +49,19 @@
   <div id="invPanel" class="drops-panel ui-widget-content">
     <div id="charInv">
       <ul>
+        <li><a href="#cTabs-0">Buffs</a></li>
         <li><a href="#cTabs-1">Enchantments</a></li>
         <li><a href="#cTabs-2">Gifts</a></li>
         <li><a href="#cTabs-3">Keys</a></li>
-        <li><a href="#cTabs-4">Objects</a></li>
+        <li><a href="#cTabs-4">Aids</a></li>
       </ul>
+
+      <div id="cTabs-0">
+        <table id="buffs">
+          <tbody>
+          </tbody>
+        </table>
+      </div>
 
       <div id="cTabs-1">
         <table id="enchantments">
@@ -77,7 +85,7 @@
       </div>
 
       <div id="cTabs-4">
-        <table id="objects">
+        <table id="aids">
           <tbody>
           </tbody>
         </table>
@@ -98,18 +106,18 @@
 
   <div id="npcDialogPanel">
 
-  <div style="height:300px; width: 770px; position: relative">
-    <div id="playerPanel" class="picPanel">
-      <img id="dcharpic" src="assets/char.png">
+    <div style="height:300px; width: 770px; position: relative">
+      <div id="playerPanel" class="picPanel">
+        <img id="dcharpic" src="assets/char.png">
+      </div>
+      <div id="dplayerstats" class="panelText">
+      </div>
+      <div id="nPCPanel" class="picPanel">
+        <img id="dnpcpic" src="assets/npc.png">
+      </div>
+      <div id="dnpcstats" class="panelText">
+      </div>
     </div>
-    <div id="dplayerstats" class="panelText" >
-    </div>
-    <div id="nPCPanel" class="picPanel" >
-      <img id="dnpcpic" src="assets/npc.png">
-    </div>
-    <div id="dnpcstats" class="panelText" >
-    </div>
-  </div>
     <div id="npcDiagText" class="ui-corner-all ui-widget ui-widget-content">
     </div>
     <div id="diagOpts">

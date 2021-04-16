@@ -59,6 +59,15 @@ export class Player extends Phaser.GameObjects.Sprite {
     this.skillp = this.skillp + inv.skill;
   }
 
+  addObject(objData)
+  {
+    this.inventory.push(objData);
+    if (objData.Class == "Buff")
+    {
+      if (objData.Sed) this.sedp += objData.Sed;
+      if (objData.Skill) this.skill += objData.Skill;
+     }
+  }
 }
 
 export class NPC extends Phaser.GameObjects.PathFollower {

@@ -36,7 +36,7 @@
         case 3:
         case 5: { // Ask section
           if (response == "no") {
-            this.fin("true",this.textAssets.walkaway, qDialog);
+            this.fin("true", this.textAssets.walkaway, qDialog);
             break;
           }
           qDialog.displaynPCDialogPlayer(this.player);
@@ -53,7 +53,7 @@
         case 4:
         case 6: { // Catch result of Ask
           if (response == "no") {
-            this.fin("true",this.textAssets.turndown, qDialog);
+            this.fin("true", this.textAssets.turndown, qDialog);
             break;
 
           }
@@ -83,19 +83,18 @@
           // Reached the end so see if the player score is big enough to
           //
           const prompt = this.nPC.advance(this.player, this.textAssets);
-          qDialog.displayResult(
-            {
-              score: -1,
-              text: prompt
-            } );
-            this.player.dialogStage = 0;
-            this.player.score = 0;
+          qDialog.displayResult({
+            score: -1,
+            text: prompt
+          });
+          this.player.dialogStage = 0;
+          this.player.score = 0;
         }
 
       }
 
       function getDiagResponse(response, self) {
-        if (response.effect > self.nPC.npcLst) {  // Player over-reached
+        if (response.effect > self.nPC.npcLst) { // Player over-reached
           self.nPC.processFailure();
           this.player.dialogStage = 0;
           this.player.score = 0;
@@ -117,8 +116,7 @@
         let resps = null;
         if (response.choice == "say") {
           resps = self.textAssets.nPCResponse.find(rs => rs.rset == response.id.respSet);
-        }
-        else {
+        } else {
           resps = self.textAssets.nPCAction.find(rs => rs.rset == response.id.respSet);
         }
 
@@ -142,9 +140,10 @@
         const result = response.id.cor * self.player.skill;
 
         if (response.choice == "say") {
-          const resps = self.textAssets.nPCResponse.find(rs => rs.set == response.id.respSet);}
-        else {
-          const resps = self.textAssets.nPCAction.find(rs => rs.set == response.id.respSet);}
+          const resps = self.textAssets.nPCResponse.find(rs => rs.set == response.id.respSet);
+        } else {
+          const resps = self.textAssets.nPCAction.find(rs => rs.set == response.id.respSet);
+        }
         const nText = resps.responses[result].text.replace("+n", self.nPC.npcName);
         return {
           score: result,
@@ -252,4 +251,63 @@
         this.emitter.emit('finCon', this);
       }
     }
+  }
+
+  export class ObjectDriver {
+    constructor() {
+      this.response = "no";
+    }
+
+    // Initialize the dialog modal
+    init(player, tile, emitter) {
+      this.player = player;
+      this.tile = tile;
+      this.emitter = emitter;
+      this.type = "finObj";
+
+    };
+
+    stepOn(qDialog, response) {
+
+      switch (this.player.dialogStage) {
+        case 0: {
+          let prompt = "You find a " + this.tile.getTileData().type +
+            ". It is " + this.tile.properties.Description +
+            ". Do you want to pick up the " + this.tile.getTileData().type + "?";
+
+          qDialog.displayYesNo(prompt, this);
+          this.player.dialogStage = 1;
+          break;
+        }
+        case 1: {
+
+          if (response == "no") {
+            this.fin(false, "", qDialog);
+            break;
+          }
+
+          prompt = "The " + this.tile.getTileData().type + " has been added to your inventory.";
+          const self = this;
+
+          self.player.addObject(this.tile.properties);
+          qDialog.addObject(this.tile);
+          qDialog.updateStats(this.player);
+
+          this.tile.resetCollision(true);
+          this.tile.setVisible(false);
+
+          this.fin(true, prompt, qDialog);
+        }
+      }
+    }
+
+    fin(diag, prompt, qDialog) {
+      this.player.dialogStage = 0;
+      if (diag) {
+        qDialog.displayEndDialogue(prompt, this);
+      } else {
+        this.emitter.emit('finObj', this);
+      }
+    }
+
   }

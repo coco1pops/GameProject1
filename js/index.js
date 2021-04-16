@@ -11,7 +11,8 @@ import {
 
 import {
   DialogDriver,
-  ContainerDriver
+  ContainerDriver,
+  ObjectDriver
 } from "./dialogDriver.js";
 
 import setAnims from "./anims.js";
@@ -54,13 +55,20 @@ let objLoader = [];
 let showDebug = true; // test to see if this disables the debug view
 
 function preload() {
-  let fi = "../assets/" + sceneList.Scenes[sceneix].Image;
-  this.load.image("tiles", fi);
-  fi = "../assets/" + sceneList.Scenes[sceneix].TiledMap;
+
+  let fi = "../assets/" + sceneList.Scenes[sceneix].TiledMap;
   this.load.tilemapTiledJSON("map", fi);
 
   let self = this;
-  let objList = sceneList.Objects.filter(obj => obj.Scene == sceneList.Scenes[sceneix].Scene);
+  let i = 1;
+  let objList = sceneList.TileSets.filter(obj => obj.Scene == sceneList.Scenes[sceneix].Scene);
+  objList.forEach(obj => {
+    fi = "../assets/" + obj.TileSet;
+    self.load.image("tiles" + i, fi);
+    i++;
+  });
+
+  objList = sceneList.Objects.filter(obj => obj.Scene == sceneList.Scenes[sceneix].Scene);
   objList.forEach(obj => {
     fi = "../assets/" + obj.File;
     self.load.spritesheet(obj.Key, fi, {
@@ -102,10 +110,19 @@ function create() {
 
   // Parameters are the name you gave the tileset in Tiled and then the key of the tileset image in
   // Phaser's cache (i.e. the name you used in preload)
-  const tileset = map.addTilesetImage("tmw_desert_spacing", "tiles");
+  let tilesets =[];
+  let i = 1;
+  map.tilesets.forEach(ts => {
+    map.addTilesetImage(ts.name, "tiles" + i );
+    i++;
+  });
+
+//  const tileset = map.addTilesetImage("tmw_desert_spacing", "tiles");
 
   // Parameters: layer name (or index) from Tiled, tileset, x, y
-  const belowLayer = map.createStaticLayer("Base Layer", tileset, 0, 0);
+  const belowLayer = map.createLayer("Base Layer", map.tilesets, 0, 0);
+  const tileObjLayer = map.createLayer("Tile Objects", map.tilesets, 0, 0);
+
   // TODO: Add more layers. In particular above layer
 
   //const textAssets = this.cache.json.get('textData');
@@ -167,6 +184,8 @@ function create() {
     collides: true
   });
 
+  tileObjLayer.setCollisionByExclusion([-1]);
+
   // Get the spawn point from the map file and create the player sprite
 
   const spawnPoint = map.findObject("Object Layer", obj => obj.name === "Spawn Point");
@@ -181,6 +200,7 @@ function create() {
 
   // Watch the player and worldLayer for collisions, for the duration of the scene:
   this.physics.add.collider(player, belowLayer);
+  this.physics.add.collider(player, tileObjLayer, _collideObject, null, this);
   this.physics.add.overlap(player, containers, _collideContainer, null, this);
   this.physics.add.collider(player, nPCs, _collideNPC, null, this);
 
@@ -221,6 +241,7 @@ function create() {
   qDialog.emitter = dialogEmitter;
   dialogEmitter.addListener("finCon", _catchFin);
   dialogEmitter.addListener("finNPC", _catchNPC);
+  dialogEmitter.addListener("finObj", _catchObj);
 
   function _collideContainer(player, container) {
 
@@ -255,6 +276,19 @@ function create() {
     const timedEvent = detail.nPC.scene.time.delayedCall(6000, detail.nPC.onEvent, [], detail.nPC);
     detail = null;
     //  player.scene.scene.resume();
+    resumeScene(player);
+  }
+
+  function _collideObject(player, tile) {
+
+    pauseScene(player);
+    const od = new ObjectDriver();
+    od.init(player, tile, dialogEmitter);
+    od.stepOn(qDialog, textAssets, "n");
+  }
+
+  function _catchObj(detail) {
+    detail = null;
     resumeScene(player);
   }
 

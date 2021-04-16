@@ -290,6 +290,18 @@ export default class DialogClass {
     $("#enchantments tbody").append(tmp);
   }
 
+  addObject (obj) {
+    let tmp = "<tr><td>" + obj.getTileData().type + "</td><td>";
+    tmp = tmp + obj.properties.Description + "</td></tr>";
+    switch (obj.properties.Class) {
+      case "Buff": $("#buffs tbody").append(tmp);
+      case "Enchantment": $("#enchantments tbody").append(tmp);
+      case "Gift": $("#gifts tbody").append(tmp);
+      case "Key": $("#keys tbody").append(tmp);
+      case "Aid": $("#aids tbody").append(tmp);
+    }
+
+  }
   //TODO display the title dialogue
   displayTitles() {
 

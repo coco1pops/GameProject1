@@ -1,6 +1,6 @@
 {"sourceFile": "scenes.xlsx",
  "header": {"rows":1},
- "sheets": ["Scenes","Objects","Containers"],
+ "sheets": ["Scenes","TileSets","Objects","Containers"],
  "columnToKey": {
         "*": "{{columnHeader}}"
     }
