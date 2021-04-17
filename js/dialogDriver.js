@@ -40,11 +40,12 @@
             break;
           }
           qDialog.displaynPCDialogPlayer(this.player);
+          qDialog.displaynPCDialogNPC(this.nPC, this.textAssets);
 
           const opts = this.nPC.getOpts(this.textAssets);
-          const stats = this.nPC.getStats(this.textAssets);
+          const gifts = this.player.getGifts();
 
-          qDialog.displayAsk(opts, stats, this.textAssets, this.player.dialogStage);
+          qDialog.displayAsk(opts, gifts, this.textAssets, this.player.dialogStage, this.nPC.npcName);
           this.player.dialogStage++;
           break;
         }
@@ -62,17 +63,28 @@
           // Dialogue has passed back the mode and the row of the
           // choice in response
           //
-
           let result = null;
 
-          if (this.nPC.npcRel < 3)
-            // in dialogue mode}
-            result = getDiagResponse(response, self);
-          else
-            result = getRoomResponse(response, self);
+          if (response.choice == "give") {
+              let obj = this.player.inventory.find(o => o.name == response.id);
+              result = getGiftResponse(obj.properties, self);
+
+              // Delete gift from array
+              let ix = this.player.inventory.findIndex(o => o.name == response.id);
+              let del = this.player.inventory.splice(ix,1);
+          } else {
+            if (this.nPC.npcRel < 3)
+              // in dialogue mode
+              result = getDiagResponse(response, self);
+            else
+              result = getRoomResponse(response, self);
+          }
 
           this.player.score = this.player.score + result.score;
+
           qDialog.displaynPCDialogPlayer(this.player);
+          qDialog.displaynPCDialogNPC(this.nPC, this.textAssets);
+          result.text = result.text.replace("+n", self.nPC.npcName);
           qDialog.displayResult(result);
           this.player.dialogStage++;
           break;
@@ -93,6 +105,22 @@
 
       }
 
+      function getGiftResponse (obj, self) {
+        let score = 0;
+        if (obj.Lst) {
+          self.nPC.npcLst += obj.Lst;
+          score = obj.Lst;
+        }
+        if (obj.Rel) {
+          self.nPC.npcLst += obj.Rel;
+          score += obj.Rel;
+        }
+        return {
+          score: score,
+          text: "+n thanks you for the gift"
+        }
+      }
+
       function getDiagResponse(response, self) {
         if (response.effect > self.nPC.npcLst) { // Player over-reached
           self.nPC.processFailure();
@@ -109,7 +137,7 @@
         if (result.ix == -1) {
           return {
             score: 0,
-            text: self.textAssets.diagBored.replace("+n", self.nPC.npcName)
+            text: self.textAssets.diagBored
           }
         }
 
@@ -120,7 +148,7 @@
           resps = self.textAssets.nPCAction.find(rs => rs.rset == response.id.respSet);
         }
 
-        const nText = resps.responses[result.ix].replace("+n", self.nPC.npcName);
+        const nText = resps.responses[result.ix];
         return {
           score: result.res,
           text: nText
@@ -144,7 +172,7 @@
         } else {
           const resps = self.textAssets.nPCAction.find(rs => rs.set == response.id.respSet);
         }
-        const nText = resps.responses[result].text.replace("+n", self.nPC.npcName);
+        const nText = resps.responses[result];
         return {
           score: result,
           text: nText
@@ -207,7 +235,7 @@
             let i = 0;
             for (i = 0; i < this.container.contents.length; i++)
               prompt = prompt + "<br>" + this.container.contents[i].name +
-              ", " + this.container.contents[i].description;
+              ", " + this.container.contents[i].properties.Description;
 
             prompt = prompt + "<br><br>Do you want to collect these items?";
 
@@ -230,9 +258,9 @@
 
           prompt = "These items have been added to your inventory.";
           const self = this;
-          this.container.contents.forEach(function(row) {
-            self.player.addInventory(row);
-            qDialog.addEnchantments(row);
+          this.container.contents.forEach(function(obj) {
+            self.player.addObject(obj, obj.name);
+            qDialog.addObject(obj, obj.name);
           });
 
           qDialog.updateStats(this.player);
@@ -271,8 +299,10 @@
 
       switch (this.player.dialogStage) {
         case 0: {
+          let desc = this.tile.properties.Description;
           let prompt = "You find a " + this.tile.getTileData().type +
-            ". It is " + this.tile.properties.Description +
+            ". It is " + desc.charAt(0).toLowerCase() +
+            desc.slice(1) +
             ". Do you want to pick up the " + this.tile.getTileData().type + "?";
 
           qDialog.displayYesNo(prompt, this);
@@ -289,8 +319,8 @@
           prompt = "The " + this.tile.getTileData().type + " has been added to your inventory.";
           const self = this;
 
-          self.player.addObject(this.tile.properties);
-          qDialog.addObject(this.tile);
+          self.player.addObject(this.tile, this.tile.getTileData().type);
+          qDialog.addObject(this.tile, this.tile.getTileData().type);
           qDialog.updateStats(this.player);
 
           this.tile.resetCollision(true);

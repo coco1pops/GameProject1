@@ -165,7 +165,7 @@ export default class DialogClass {
 
   }
 
-  displayAsk(opts, stats, textAssets, stage) {
+  displayAsk(opts, gifts, textAssets, stage, npcName) {
     //
     // Clear out any left over text
     //
@@ -186,10 +186,9 @@ export default class DialogClass {
     //
     // Load up data
     //
-    $("#dnpcstats").html(stats);
-
     $("#drow").append(opts.dialog);
     $("#arow").append(opts.actions);
+    $("#grow").append(gifts);
 
     let self = this;
 
@@ -197,6 +196,7 @@ export default class DialogClass {
       let row = $(this).closest('tr');
       $(".d-clickable-row").removeClass("highlight");
       $(".a-clickable-row").removeClass("highlight");
+      $(".g-clickable-row").removeClass("highlight");
       if (self.resp.id == $(row).find(".id").html() && self.resp.choice == "say") {
         self.resp = "no";
         $("#bnAccept").hide();
@@ -217,6 +217,7 @@ export default class DialogClass {
       let row = $(this).closest('tr');
       $(".d-clickable-row").removeClass("highlight");
       $(".a-clickable-row").removeClass("highlight");
+      $(".g-clickable-row").removeClass("highlight");
       if (self.resp.id == $(row).find(".id").html() && self.resp.choice == "action") {
         self.resp = "no";
         $("#bnAccept").hide();
@@ -228,6 +229,27 @@ export default class DialogClass {
           choice: "action",
           text: $(row).find(".dText").html(),
           id: textAssets.playerAction.find(rw => rw.id == id)
+        };
+        $("#bnAccept").show();
+      }
+    });
+
+    $(".g-clickable-row").click(function() {
+      let row = $(this).closest('tr');
+      $(".d-clickable-row").removeClass("highlight");
+      $(".a-clickable-row").removeClass("highlight");
+      $(".g-clickable-row").removeClass("highlight");
+      if (self.resp.id == $(row).find(".gText1").html() && self.resp.choice == "give") {
+        self.resp = "no";
+        $("#bnAccept").hide();
+        id = null
+      } else {
+        id = $(row).find(".gText1").html();
+        $(row).addClass("highlight");
+        self.resp = {
+          choice: "give",
+          text: "You give " + npcName + " the " + $(row).find(".gText1").html(),
+          id: id
         };
         $("#bnAccept").show();
       }
@@ -284,21 +306,30 @@ export default class DialogClass {
 
   }
 
-  addEnchantments(inv) {
-    let tmp = "<tr><td>" + inv.name + "</td><td>";
-    tmp = tmp + inv.description + "</td></tr>";
-    $("#enchantments tbody").append(tmp);
-  }
-
-  addObject (obj) {
-    let tmp = "<tr><td>" + obj.getTileData().type + "</td><td>";
+  addObject(obj, name) {
+    let tmp = "<tr><td>" + name + "</td><td>";
     tmp = tmp + obj.properties.Description + "</td></tr>";
     switch (obj.properties.Class) {
-      case "Buff": $("#buffs tbody").append(tmp);
-      case "Enchantment": $("#enchantments tbody").append(tmp);
-      case "Gift": $("#gifts tbody").append(tmp);
-      case "Key": $("#keys tbody").append(tmp);
-      case "Aid": $("#aids tbody").append(tmp);
+      case "Buff": {
+        $("#buffs tbody").append(tmp);
+        break;
+      }
+      case "Enchantment": {
+        $("#enchantments tbody").append(tmp);
+        break;
+      }
+      case "Gift": {
+        $("#gifts tbody").append(tmp);
+        break;
+      }
+      case "Key": {
+        $("#keys tbody").append(tmp);
+        break;
+      }
+      case "Aid": {
+        $("#aids tbody").append(tmp);
+        break;
+      }
     }
 
   }
@@ -475,12 +506,17 @@ export default class DialogClass {
 
   }
   displaynPCDialogPlayer(player) {
-    let turn = (player.dialogStage + 1)/2;
-    if (!(player.dialogStage % 2)) turn += 0.5;
-    const playerText = "Name: " + player.name + "<br>" +
+    let turn = (player.dialogStage + 1) / 2;
+    if (!(player.dialogStage % 2)) turn -= 0.5;
+    const playerText = "Name: " + player.name + "<br><br>" +
       "Turn: " + turn + "<br>" +
       "Score: " + player.score;
     $("#dplayerstats").html(playerText);
+  }
+
+  displaynPCDialogNPC(npc,textAssets){
+    let stats = npc.getStats(textAssets);
+    $("#dnpcstats").html(stats);
   }
 
 }

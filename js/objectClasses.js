@@ -7,7 +7,7 @@ export class Container extends Phaser.GameObjects.Sprite {
     this.contents = null;
   }
 
-  extractData(textAssets) {
+  extractData(inv) {
 
     if (this.contentsList) {
       const lst = this.contentsList.split(",");
@@ -15,7 +15,7 @@ export class Container extends Phaser.GameObjects.Sprite {
       let j = 0;
       for (j = 0; j < lst.length; j++) {
         const k = j;
-        const invDets = textAssets.inventory.find(o => o.key == lst[k]);
+        const invDets = inv.find(o => o.key == lst[k]);
         this.contents.push(invDets);
       }
     }
@@ -51,22 +51,31 @@ export class Player extends Phaser.GameObjects.Sprite {
     this.score = 0;
   }
 
-  addInventory(inv)
-  // adds inventory
+
+  addObject(objData, name)
   {
-    this.inventory.push(inv);
-    this.sedp = this.sedp + inv.sed;
-    this.skillp = this.skillp + inv.skill;
+    console.log(objData);
+    let tmp = {
+      name: name,
+      properties: objData.properties
+    }
+    this.inventory.push(tmp);
+    if (objData.properties.Class == "Buff")
+    {
+      if (objData.properties.Sed) this.sedp += objData.Sed;
+      if (objData.properties.Skill) this.skill += objData.Skill;
+     }
   }
 
-  addObject(objData)
-  {
-    this.inventory.push(objData);
-    if (objData.Class == "Buff")
-    {
-      if (objData.Sed) this.sedp += objData.Sed;
-      if (objData.Skill) this.skill += objData.Skill;
-     }
+  getGifts() {
+    let grow = "";
+    const self = this;
+    this.inventory.filter(obj => obj.properties.Class == "Gift").forEach( function(obj) {
+        grow = grow + "<tr class='g-clickable-row'><td class='gText1'>"+ obj.name+ "</td><td class='gText2'>" +
+        obj.properties.Description + "</td></tr>";
+
+    });
+    return grow;
   }
 }
 
@@ -174,7 +183,8 @@ export class NPC extends Phaser.GameObjects.PathFollower {
   }
 
   getStats(textAssets) {
-    let prompt = "Relationship: " + textAssets.nPCRelationship[this.npcRel] + "<br>";
+    let prompt = "Name: "+ this.npcName + "<br><br>";
+    prompt = prompt + "Relationship: " + textAssets.nPCRelationship[this.npcRel] + "<br>";
     prompt = prompt + "Attitude: " + textAssets.nPCLst[this.npcLst] + "<br>";
     prompt = prompt + "Corruption: " + textAssets.nPCCor[this.npcCor];
     return prompt;

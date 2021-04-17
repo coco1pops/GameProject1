@@ -127,6 +127,14 @@
   width: 600px;
 }
 
+.gText1 {
+  width: 100px;
+}
+
+.gText2 {
+  width: 500px;
+}
+
 .a-clickable-row:hover, .d-clickable-row:hover {
   background-color: #696969;
 

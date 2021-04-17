@@ -26,6 +26,7 @@ qDialog.displayTitles();
 var player;
 var cursors;
 var nPCs;
+var inv = [];
 
 const config = {
   type: Phaser.AUTO,
@@ -110,14 +111,35 @@ function create() {
 
   // Parameters are the name you gave the tileset in Tiled and then the key of the tileset image in
   // Phaser's cache (i.e. the name you used in preload)
-  let tilesets =[];
+
   let i = 1;
   map.tilesets.forEach(ts => {
     map.addTilesetImage(ts.name, "tiles" + i );
     i++;
   });
 
-//  const tileset = map.addTilesetImage("tmw_desert_spacing", "tiles");
+  // Extract the objects from the TileSet
+
+  map.tilesets.forEach(function (obj, ix){
+    if (obj.name == "Objects"){
+
+      const td = obj.tileData;
+      const tk = Object.keys(td);
+      const tv = Object.values(td);
+      const tp = obj.tileProperties;
+
+      tk.forEach(function (ref, ix1) {
+        const iref = tk[ix1];
+        const iname = tv[ix1].type;
+        const props = tp[iref];
+
+        inv.push({ key: iref, name: iname , properties: props } );
+      });
+
+      console.log(inv);
+    }
+  });
+
 
   // Parameters: layer name (or index) from Tiled, tileset, x, y
   const belowLayer = map.createLayer("Base Layer", map.tilesets, 0, 0);
@@ -147,7 +169,7 @@ function create() {
     // extract the additional data from the map file
     // currently this is only objects. Add additional text
     // from the text assets and enable the sprites
-    container.extractData(textAssets);
+    container.extractData(inv);
     container.setText(sceneList);
     this.physics.world.enable(container);
   });
