@@ -15,6 +15,10 @@ import {
   ObjectDriver
 } from "./dialogDriver.js";
 
+var dd = new DialogDriver();
+var cd = new ContainerDriver();
+var od = new ObjectDriver();
+
 import setAnims from "./anims.js";
 
 var textAssets = require("../assets/textAssets.json");
@@ -135,8 +139,6 @@ function create() {
 
         inv.push({ key: iref, name: iname , properties: props } );
       });
-
-      console.log(inv);
     }
   });
 
@@ -268,7 +270,6 @@ function create() {
   function _collideContainer(player, container) {
 
     pauseScene(player);
-    const cd = new ContainerDriver();
     cd.init(player, container, dialogEmitter);
     cd.stepOn(qDialog, textAssets, "n");
   }
@@ -288,8 +289,6 @@ function create() {
     nPC.body.enable = false;
     pauseScene(player);
 
-    const dd = new DialogDriver();
-
     dd.init(player, nPC, dialogEmitter, textAssets);
     dd.stepOn(qDialog, "n");
   }
@@ -304,7 +303,6 @@ function create() {
   function _collideObject(player, tile) {
 
     pauseScene(player);
-    const od = new ObjectDriver();
     od.init(player, tile, dialogEmitter);
     od.stepOn(qDialog, textAssets, "n");
   }

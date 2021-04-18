@@ -112,6 +112,10 @@
   color: lightblue;
 }
 
+.dTable, .iTable {
+   border-collapse: collapse
+}
+
 .dTable thead {
   display:table;
   width: 100%;
@@ -123,6 +127,10 @@
     overflow: auto;
 }
 
+.dTable tr, .iTable tr {
+  border: 1px solid #DCDCDC;
+  padding: 5px
+}
 .dTable .dText {
   width: 600px;
 }
@@ -135,7 +143,7 @@
   width: 500px;
 }
 
-.a-clickable-row:hover, .d-clickable-row:hover {
+.a-clickable-row:hover, .d-clickable-row:hover, .g-clickable-row:hover {
   background-color: #696969;
 
 }

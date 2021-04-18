@@ -47,7 +47,6 @@ export class Player extends Phaser.GameObjects.Sprite {
     this.sedp = 0;
     this.skill = 0;
     this.skillp = 0;
-    this.dialogStage = 0;
     this.score = 0;
   }
 
@@ -230,17 +229,17 @@ export class NPC extends Phaser.GameObjects.PathFollower {
     //TODO: Retrieve gift entries
   }
 
-  calculateDialogResponse(response) {
-    if (response.id.effect < this.npcLst - 1) {
+  calculateDialogResponse(effect) {
+    if (effect < this.npcLst - 1) {
       return {
         res: 0,
         ix: -1
       }
     }
 
-    const ix = 2 * (this.npcLst == response.id.effect) + (this.npcLst - 1 == response.id.effect)
-    const res = (this.npcLst + 1) * (this.npcLst == response.id.effect) +
-      this.npcLst * (this.npcLst - 1 == response.id.effect);
+    const ix = 2 * (this.npcLst == effect) + (this.npcLst - 1 == effect)
+    const res = (this.npcLst + 1) * (this.npcLst == effect) +
+      this.npcLst * (this.npcLst - 1 == effect);
 
     return {
       res: res,
@@ -263,10 +262,10 @@ export class NPC extends Phaser.GameObjects.PathFollower {
 
   }
 
-  advance(player, textAssets) {
-    if (this.nPCRel < 3) {
-      let success = (this.npcRel == 0 && player.score > 3) || (this.npcRel == 1 && player.score > 6)
-      success = success || (this.npcRel == 2 && player.score > 9)
+  advance(player, score, textAssets) {
+    if (this.npcRel < 3) {
+      let success = (this.npcRel == 0 && score > 3) || (this.npcRel == 1 && score > 6)
+      success = success || (this.npcRel == 2 && score > 9)
       if (success) {
         this.npcRel++
         if (this.npcRel == 3) {
@@ -281,10 +280,10 @@ export class NPC extends Phaser.GameObjects.PathFollower {
         return nText;
       }
     } else {
-      let success = (this.npcCor < 3 && player.score > 6) || (this.npcCor < 6 && player.score > 12)
-      success = success || (this.npcCor < 12 && player.score > 18)
+      let success = (this.npcCor < 3 && score > 6) || (this.npcCor < 6 && score > 12)
+      success = success || (this.npcCor < 12 && score > 18)
       if (success) {
-        this.npcCor = this.npcCor + player.score / 2;
+        this.npcCor = this.npcCor + score / 2;
         if (this.npcCor > 12) {
           let nText = textAssets.roomAdvance.replace("+n", this.npcName);
           return nText;

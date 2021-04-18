@@ -6,6 +6,8 @@
     constructor() {
       // load the list of dialogues
       this.response = "no";
+      this.stage = 0;
+      this.score = 0;
     }
     //  Called when a Scene shuts down, it may then come back again later
     // (which will invoke the 'start' event) but should be considered dormant.
@@ -23,12 +25,11 @@
 
       self = this;
 
-      switch (this.player.dialogStage) {
+      switch (this.stage) {
         case 0: { // Approach dialogue
           const opts = this.nPC.getPreAmble(this.textAssets);
           qDialog.displayYesNo(opts, this);
-          this.player.dialogStage = 1;
-          this.player.score = 0;
+          this.stage = 1;
           break;
         }
 
@@ -39,14 +40,14 @@
             this.fin("true", this.textAssets.walkaway, qDialog);
             break;
           }
-          qDialog.displaynPCDialogPlayer(this.player);
+          qDialog.displaynPCDialogPlayer(this.stage, this.score, this.player);
           qDialog.displaynPCDialogNPC(this.nPC, this.textAssets);
 
           const opts = this.nPC.getOpts(this.textAssets);
           const gifts = this.player.getGifts();
 
-          qDialog.displayAsk(opts, gifts, this.textAssets, this.player.dialogStage, this.nPC.npcName);
-          this.player.dialogStage++;
+          qDialog.displayAsk(opts, gifts, this.textAssets, this.stage, this.nPC.npcName);
+          this.stage++;
           break;
         }
 
@@ -80,13 +81,17 @@
               result = getRoomResponse(response, self);
           }
 
-          this.player.score = this.player.score + result.score;
-
-          qDialog.displaynPCDialogPlayer(this.player);
-          qDialog.displaynPCDialogNPC(this.nPC, this.textAssets);
           result.text = result.text.replace("+n", self.nPC.npcName);
+          if (result.text.includes("+a")) {
+            result = processBonusAction(result, self);
+          }
+
+          this.score = this.score + result.score;
+          qDialog.displaynPCDialogPlayer(this.stage, this.score, this.player);
+          qDialog.displaynPCDialogNPC(this.nPC, this.textAssets);
+
+          this.stage++;
           qDialog.displayResult(result);
-          this.player.dialogStage++;
           break;
 
         }
@@ -94,13 +99,13 @@
         case 7: {
           // Reached the end so see if the player score is big enough to
           //
-          const prompt = this.nPC.advance(this.player, this.textAssets);
+          const prompt = this.nPC.advance(this.player, this.score, this.textAssets);
           qDialog.displayResult({
             score: -1,
             text: prompt
           });
-          this.player.dialogStage = 0;
-          this.player.score = 0;
+          this.stage = 0;
+          this.score = 0;
         }
 
       }
@@ -124,15 +129,15 @@
       function getDiagResponse(response, self) {
         if (response.effect > self.nPC.npcLst) { // Player over-reached
           self.nPC.processFailure();
-          this.player.dialogStage = 0;
-          this.player.score = 0;
+          this.stage = 0;
+          this.score = 0;
           return {
             score: -1,
             text: self.textAssets.failDialog
           };
         }
 
-        const result = self.nPC.calculateDialogResponse(response);
+        const result = self.nPC.calculateDialogResponse(response.id.effect);
 
         if (result.ix == -1) {
           return {
@@ -158,8 +163,8 @@
       function getRoomResponse(response, self) {
         if (response.cor - self.player.skill > self.nPC.npcCor) {
           self.nPC.processFailure();
-          this.player.dialogStage = 0;
-          this.player.score = 0;
+          self.stage = 0;
+          self.score = 0;
           return {
             score: -1,
             text: self.textAssets.failRoom
@@ -178,11 +183,33 @@
           text: nText
         };
       }
+
+      function processBonusAction (result, self) {
+        // find the substring
+        const str = result.text;
+        const act = str.indexOf("+a");
+        const newactid = str.substring(act + 3, str.length);
+        let newresp = result.text.substring(0, act - 1);
+        const action = self.textAssets.playerAction.find(a => a.id == newactid);
+        let newact = action.text.replace("+n", self.nPC.npcName);
+
+        newresp += "</p><p>You " + newact.charAt(0).toLowerCase() + newact.slice(1) +
+          "<p class='npcResp'>";
+
+        const score = self.nPC.calculateDialogResponse(2);
+        let newscore = score.res + result.score;
+        const resps = self.textAssets.nPCAction.find(r => r.rset == action.respSet);
+        newresp = newresp + resps.responses[score.ix].replace("+n", self.nPC.npcName);
+        return {
+          text: newresp,
+          score: newscore
+        }
+      }
     }
 
     fin(diag, prompt, qDialog) {
-      this.player.dialogStage = 0;
-      this.player.score = 0;
+      this.stage = 0;
+      this.score = 0;
       if (diag) {
         qDialog.displayEndDialogue(prompt, this);
       } else {
@@ -204,13 +231,14 @@
       this.container = container;
       this.emitter = emitter;
       this.type = "finCon";
+      this.stage = 0;
 
     };
 
 
     stepOn(qDialog, response) {
 
-      switch (this.player.dialogStage) {
+      switch (this.stage) {
         case 0: {
           let prompt = "You approach the " + this.container.name +
             ". It is " + this.container.description.charAt(0).toLowerCase() +
@@ -218,7 +246,7 @@
             ". Do you want to search the " + this.container.name + "?";
 
           qDialog.displayYesNo(prompt, this);
-          this.player.dialogStage = 1;
+          this.stage = 1;
           break;
         }
         case 1: {
@@ -240,7 +268,7 @@
             prompt = prompt + "<br><br>Do you want to collect these items?";
 
             qDialog.displayYesNo(prompt, this);
-            this.player.dialogStage++;
+            this.stage++;
             break;
 
           } else {
@@ -272,7 +300,7 @@
     }
 
     fin(diag, prompt, qDialog) {
-      this.player.dialogStage = 0;
+      this.stage = 0;
       if (diag) {
         qDialog.displayEndDialogue(prompt, this);
       } else {
@@ -291,13 +319,14 @@
       this.player = player;
       this.tile = tile;
       this.emitter = emitter;
+      this.stage = 0;
       this.type = "finObj";
 
     };
 
     stepOn(qDialog, response) {
 
-      switch (this.player.dialogStage) {
+      switch (this.stage) {
         case 0: {
           let desc = this.tile.properties.Description;
           let prompt = "You find a " + this.tile.getTileData().type +
@@ -306,7 +335,7 @@
             ". Do you want to pick up the " + this.tile.getTileData().type + "?";
 
           qDialog.displayYesNo(prompt, this);
-          this.player.dialogStage = 1;
+          this.stage = 1;
           break;
         }
         case 1: {
@@ -332,7 +361,7 @@
     }
 
     fin(diag, prompt, qDialog) {
-      this.player.dialogStage = 0;
+      this.stage = 0;
       if (diag) {
         qDialog.displayEndDialogue(prompt, this);
       } else {

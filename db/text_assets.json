@@ -1,20 +1,5 @@
   {
-    "inventory": [{"key": 1,
-          "name": "test name 1",
-          "description": "test desc 1",
-          "sed": 0,
-          "sap": 0,
-          "skill": 0
-        },
-        { "key": 2,
-          "name": "test name 2",
-          "description": "test desc 2",
-          "sed": 1,
-          "sap": 1,
-          "skill": 1
-        }
-      ],
-      "nPCRelationship":["Hostile", "Friendly", "Very Friendly",
+      "nPCRelationship":["Indifferent", "Friendly", "Very Friendly",
       "Lover"],
       "nPCAspect": ["tries to ignore you",
         "gives you a slight smile",
@@ -31,7 +16,6 @@
       "Saints": ["Ursula", "Nymphodora", "Euphemia", "Pulcheria", "Liutberga",
                 "Dorothea", "Gertrude"],
       "ObjectLevel":["","Holy","Most Holy"],
-      "Enchantments": "To do",
       "walkaway": "You avert your eyes and hurry past",
       "turndown": "You shake your head and turn away",
       "failDialog": "+n blushes, shakes her head and walks away",

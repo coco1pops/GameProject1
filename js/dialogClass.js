@@ -505,12 +505,12 @@ export default class DialogClass {
     $("#dialogContainer").dialog("open");
 
   }
-  displaynPCDialogPlayer(player) {
-    let turn = (player.dialogStage + 1) / 2;
-    if (!(player.dialogStage % 2)) turn -= 0.5;
+  displaynPCDialogPlayer(stage, score, player) {
+    let turn = (stage + 1) / 2;
+    if (!(stage % 2)) turn -= 0.5;
     const playerText = "Name: " + player.name + "<br><br>" +
       "Turn: " + turn + "<br>" +
-      "Score: " + player.score;
+      "Score: " + score;
     $("#dplayerstats").html(playerText);
   }
 
