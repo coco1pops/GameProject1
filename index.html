@@ -11,13 +11,18 @@
 
   <div id="titles"></div>
 
+<!-- First section is control bar at the top -->
+
   <div id="topline" class="ui-widget-header">
     <div id="controls">
       <button id="status" class="ui-button ui-widget ui-corner-all">Status</button>
       <button id="inventory" class="ui-button ui-widget ui-corner-all">Inventory</button>
+      <button id="enchant" class="ui-button ui-widget ui-corner-all">Enchant</button>
     </div>
-    <span style="margin-left:55%" class="ui-widget" </span>Score <span id="Experience" class="ui-widget"> 0 </span>
+    <span style="margin-left:45%" class="ui-widget" </span>Experience <span id="experience" class="ui-widget"> 0 </span>
   </div>
+
+<!-- Player Panel -->
 
   <div id="panel" class="drops-panel ui-widget-content">
     <div>Player Panel </div>
@@ -45,6 +50,8 @@
       <img id="charpic" src="assets/char.png">
     </div>
   </div>
+
+<!-- Inventory Panel -->
 
   <div id="invPanel" class="drops-panel ui-widget-content">
     <div id="charInv">
@@ -94,6 +101,46 @@
     </div>
   </div>
 
+<!-- Enchantment Panel -->
+
+  <div id="encPanel" class="drops-panel ui-widget-content">
+    <div class='widget'>
+    <fieldset id="rset1">
+      <legend>Pick What to Enchant</legend>
+        <label for="set1-radio-1">Buffs
+          <input type="radio" name="set1-radio" value="buffs" id="set1-radio-1">
+        </label>
+        <label for="set1-radio-2">Gifts
+          <input type="radio" name="set1-radio" value="gifts" id="set1-radio-2">
+        </label>
+    </fieldset>
+    <div id="encList" >
+      <table id="encTable" class="eTable">
+        <tbody id="encObjs" class="dTbody">
+        </tbody>
+      </table>
+    </div>
+    <fieldset id="rset2">
+      <legend>Pick How to Enchant</legend>
+      <label for="set2-radio-1">Experience
+        <input type="radio" name="set2-radio" value="exp" id="set2-radio-1">
+      </label>
+      <label for="set2-radio-2">Enchantments
+        <input type="radio" name="set2-radio" value="enc" id="set2-radio-2">
+      </label>
+    </fieldset>
+    <div id="encOpts" >
+      <table id="encOTable" class="eTable">
+        <tbody id="encOptsTab" class="dTbody">
+        </tbody>
+      </table>
+    </div>
+    <div id="encButtons" class="widget">
+      <button id="encbtnCancel" class="ui-button ui-widget ui-corner-all rt-align">Cancel</button>
+      <button id="encbtnOK" class="ui-button ui-widget ui-corner-all rt-align">OK</button>
+    </div>
+    </div>
+  </div>
 
   <div id="phaserblock">
     <script src="js/index.js" type="text/javascript"></script>
@@ -103,6 +150,8 @@
     <div id="dialogText">
     </div>
   </div>
+
+<!-- nPC Dialogue Panel -->
 
   <div id="npcDialogPanel">
 

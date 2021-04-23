@@ -47,34 +47,56 @@ export class Player extends Phaser.GameObjects.Sprite {
     this.sedp = 0;
     this.skill = 0;
     this.skillp = 0;
-    this.score = 0;
+    this.experience = 3000;
   }
 
 
-  addObject(objData, name)
-  {
+  addObject(objData, name) {
     console.log(objData);
     let tmp = {
       name: name,
       properties: objData.properties
     }
     this.inventory.push(tmp);
-    if (objData.properties.Class == "Buff")
-    {
-      if (objData.properties.Sed) this.sedp += objData.Sed;
-      if (objData.properties.Skill) this.skill += objData.Skill;
-     }
+    if (objData.properties.Class == "Buff") {
+      if (objData.properties.Sed) this.sedp += objData.properties.Sed;
+      if (objData.properties.Skill) this.skill += objData.properties.Skill;
+    }
   }
 
-  getGifts() {
+  getObjs(objType, oclass) {
     let grow = "";
-    const self = this;
-    this.inventory.filter(obj => obj.properties.Class == "Gift").forEach( function(obj) {
-        grow = grow + "<tr class='g-clickable-row'><td class='gText1'>"+ obj.name+ "</td><td class='gText2'>" +
+    this.inventory.filter(obj => obj.properties.Class == objType).forEach(function(obj) {
+      grow = grow + "<tr class='" + oclass + "-clickable-row'><td class='gText1'>" + obj.name + "</td><td class='gText2'>" +
         obj.properties.Description + "</td></tr>";
 
     });
     return grow;
+  }
+
+  getObjsFor(objType, sel) {
+    let erow = "";
+
+    this.inventory.filter(obj => obj.properties.Class == objType).forEach(function(obj) {
+      if (sel == "gifts" && (obj.properties.Cor || obj.properties.Lst)) {
+        erow = buildRow(erow, obj);
+      }
+      if (sel == "buffs" && (obj.properties.Sed || obj.properties.Skill)) {
+        erow = buildRow(erow, obj);
+      }
+    });
+
+    function buildRow(erow, obj) {
+      return erow + "<tr class='x-clickable-row'><td class='gText1'>" + obj.name + "</td><td class='gText2'>" +
+        obj.properties.Description + "</td><td style = 'display:none' class = 'id'>" + obj.name + "</td></tr>";
+    }
+    return erow;
+
+  }
+
+  addExperience(score) {
+    this.experience += score;
+    //TODO: Need to check level
   }
 }
 
@@ -182,7 +204,7 @@ export class NPC extends Phaser.GameObjects.PathFollower {
   }
 
   getStats(textAssets) {
-    let prompt = "Name: "+ this.npcName + "<br><br>";
+    let prompt = "Name: " + this.npcName + "<br><br>";
     prompt = prompt + "Relationship: " + textAssets.nPCRelationship[this.npcRel] + "<br>";
     prompt = prompt + "Attitude: " + textAssets.nPCLst[this.npcLst] + "<br>";
     prompt = prompt + "Corruption: " + textAssets.nPCCor[this.npcCor];

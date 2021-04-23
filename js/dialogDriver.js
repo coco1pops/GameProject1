@@ -44,7 +44,7 @@
           qDialog.displaynPCDialogNPC(this.nPC, this.textAssets);
 
           const opts = this.nPC.getOpts(this.textAssets);
-          const gifts = this.player.getGifts();
+          const gifts = this.player.getObjs("Gift", "g");
 
           qDialog.displayAsk(opts, gifts, this.textAssets, this.stage, this.nPC.npcName);
           this.stage++;
@@ -104,6 +104,8 @@
             score: -1,
             text: prompt
           });
+          this.player.addExperience(this.score);
+          qDialog.updateControls(this.player);
           this.stage = 0;
           this.score = 0;
         }

@@ -83,8 +83,16 @@
   float:left;
 }
 
+#encList, #encOpts {
+  height: 200px;
+}
+
 #diagOpts {
   height: 210px;
+}
+
+.rt-align {
+  float:right;
 }
 
 #phaserblock {
@@ -112,22 +120,30 @@
   color: lightblue;
 }
 
-.dTable, .iTable {
+.dTable, .iTable, .eTable {
    border-collapse: collapse
 }
 
-.dTable thead {
+.dTable thead, .eTable thead {
   display:table;
   width: 100%;
 }
 
-.dTable tbody {
+.dTable tbody, .eTable tbody {
     display: block;
     height: 88px;
     overflow: auto;
 }
 
-.dTable tr, .iTable tr {
+.dTable tbody {
+  height: 88px;
+}
+
+.eTable tbody {
+  height: 170px;
+}
+
+.dTable tr, .iTable tr, .eTable tr {
   border: 1px solid #DCDCDC;
   padding: 5px
 }

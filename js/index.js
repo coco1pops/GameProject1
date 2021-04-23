@@ -98,6 +98,7 @@ function preload() {
   //Add the scene to the dialogue class so it can pause and resume
 
   qDialog.scene = this.scene;
+  qDialog.enchantments = textAssets.Enchantments;
 
 }
 
@@ -220,6 +221,7 @@ function create() {
   // STEP 2 : Construct the player
 
   player = new Player(this, spawnPoint.x, spawnPoint.y, "atlas", "char1-front");
+  qDialog.player = player;
   qDialog.updateStats(player);
 
   // Watch the player and worldLayer for collisions, for the duration of the scene:

@@ -1,6 +1,6 @@
 {"sourceFile": "db.xlsx",
- "header": {"rows":1}, 
- "sheets": ["playerDialog","nPCResponse","playerAction","nPCAction"],
+ "header": {"rows":1},
+ "sheets": ["playerDialog","nPCResponse","playerAction","nPCAction", "Enchantments"],
  "columnToKey": {
         "*": "{{columnHeader}}"
     }

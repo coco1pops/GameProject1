@@ -10,10 +10,13 @@ export default class DialogClass {
 
     this.status = false;
     this.inventory = false;
+    this.enchant = false;
     this.resp = "no";
     this.driver = null;
     this.stopFlag = true;
     this.scene = null;
+    this.player = null;
+    this.enchantments = null;
 
     const self = this;
 
@@ -25,14 +28,18 @@ export default class DialogClass {
           self.scene.resume();
           $("#panel").slideUp("slow");
           $("#inventory").button("enable");
+          $("#enchant").button("enable");
         } else {
           this.status = true;
           self.scene.pause();
           $("#panel").slideDown("slow");
           $("#inventory").button("disable");
+          $("#enchant").button("disable");
         }
       });
     });
+
+    // Inventory button
     $(document).ready(function() {
       $("#inventory").click(function() {
         if (this.inventory) {
@@ -40,15 +47,40 @@ export default class DialogClass {
           self.scene.resume();
           $("#invPanel").slideUp("slow");
           $("#status").button("enable");
+          $("#enchant").button("enable");
         } else {
           this.inventory = true;
           self.scene.pause();
           $("#invPanel").slideDown("slow");
           $("#status").button("disable");
+          $("#enchant").button("disable");
         }
       });
     });
 
+    // Enchant button
+    $(document).ready(function() {
+      $("#enchant").click(function() {
+        if (self.enchant) {
+          self.enchant = false;
+          self.scene.resume();
+          $("#encPanel").slideUp("slow");
+          $("#status").button("enable");
+          $("#inventory").button("enable");
+        } else {
+          self.enchant = true;
+          self.scene.pause();
+          $("#encPanel").slideDown("slow");
+          $("#status").button("disable");
+          $("#inventory").button("disable");
+          $('input[name="set1-radio"]').prop('checked', false).button("refresh");
+          $("#encObjs").empty();
+          self.resetEncObjs();
+        }
+      });
+    });
+
+    // Initialise panels
     $(document).ready(function() {
       $("#controls").controlgroup();
       $("#controlButtons").controlgroup();
@@ -56,6 +88,7 @@ export default class DialogClass {
       $("#diagOpts").tabs();
     })
 
+    // Container Dialogue
 
     $(function() {
       $("#dialogContainer").dialog({
@@ -96,6 +129,8 @@ export default class DialogClass {
           self.catchResponse(self.resp);
         });
     });
+
+    // NPC Dialogue
 
     $(function() {
       $("#npcDialogPanel").dialog({
@@ -142,6 +177,236 @@ export default class DialogClass {
         });
     });
 
+    // Enchant Dialogue
+
+    $(document).ready(function() {
+
+      let eSel = "";
+      let xSel = "";
+      let selVal1 = "";
+      let selVal2 = "";
+
+      $("input").checkboxradio();
+      $('input[name="set2-radio"]').attr('disabled', 'disabled');
+      $("#encbtnOK").hide();
+
+      $("#enchant").click(function() {
+        eSel = "";
+      });
+
+      $("#encbtnCancel").click(function() {
+        eSel = "";
+        self.enchant = false;
+        self.scene.resume();
+        $("#encPanel").slideUp("slow");
+        $("#status").button("enable");
+        $("#inventory").button("enable");
+      })
+
+      $("#encbtnOK").click(function() {
+        let eObj = self.player.inventory.find(obj => obj.name == eSel);
+        let xObj = null;
+        if (selVal1 == "buffs") {
+          if (selVal2 == "enc") {
+            // retrieve object from xSel and eSel. Update eSel with xSel
+            // properties and delete xSel object from player
+            xObj = self.player.inventory.find(obj => obj.name == xSel);
+            console.log(xObj);
+            if (xObj.properties.Sed) {
+              if (eObj.properties.Sed) {
+                eObj.properties.Sed += xObj.properties.Sed;
+              } else {
+                eObj.properties["Sed"] = xObj.properties.Sed;
+              }
+              self.player.sedp += xObj.properties.Sed;
+            }
+            if (xObj.properties.Skill) {
+              if (eObj.properties.Skill) {
+                eObj.properties.Skill += xObj.properties.Skill;
+              } else {
+                eObj.properties["Skill"] = xObj.properties.Skill;
+              }
+              self.player.skillp += xObj.properties.Skill;
+            }
+          }
+
+          if (selVal2 == "exp") {
+            xObj = self.enchantments.find(obj => obj.id == xSel);
+            console.log(xObj);
+            if (xObj.Mode == "Sed") {
+              if (eObj.properties.Sed) {
+                eObj.properties.Sed += xObj.Bonus;
+              } else {
+                eObj.properties["Sed"] = xObj.Bonus;
+              }
+              self.player.sedp += xObj.Bonus;
+            }
+
+            if (xObj.Mode == "Skill") {
+              if (eObj.properties.Skill) {
+                eObj.properties.Skill += xObj.Bonus;
+              } else {
+                eObj.properties["Skill"] = xObj.Bonus;
+              }
+              self.player.skillp += xObj.Bonus;
+            }
+          }
+        }
+
+        if (selVal1 == "gifts") {
+          if (selVal2 == "enc") {
+            xObj = self.player.inventory.find(obj => obj.name == xSel);
+            if (xObj.properties.Lst) {
+              if (eObj.properties.Lst) {
+                eObj.properties.Lst += xObj.properties.Lst;
+              } else {
+                eObj.properties["Lst"] = xObj.properties.Lst;
+              }
+            }
+            if (xObj.properties.Cor) {
+              if (eObj.properties.Cor) {
+                eObj.properties.Cor += xObj.properties.Cor;
+              } else {
+                eObj.properties["Cor"] = xObj.properties.Cor;
+              }
+            }
+          }
+
+          if (selVal2 == "exp") {
+            xObj = self.enchantments.find(obj => obj.id == xSel);
+            if (xObj.Mode == "Lst") {
+              if (eObj.properties.Lst) {
+                eObj.properties.Lst += xObj.Bonus;
+              } else {
+                eObj.properties["Lst"] = xObj.Bonus;
+              }
+            }
+
+            if (xObj.Mode == "Cor") {
+              if (eObj.properties.Cor) {
+                eObj.properties.Cor += xObj.Bonus;
+              } else {
+                eObj.properties["Cor"] = xObj.Bonus;
+              }
+            }
+          }
+        }
+
+        $("#encOptsTab").empty();
+
+        let htTable = "";
+        if (selVal2 == "enc") {
+          let ix = self.player.inventory.findIndex(obj => obj.name == xSel);
+          let del = self.player.inventory.splice(ix, 1);
+          htTable = self.player.getObjsFor("Enchantment", selVal1);
+          rebuildEncs();
+        }
+        if (selVal2 == "exp") {
+          self.player.addExperience(-xObj.Experience);
+          self.updateControls(self.player);
+          htTable = buildEnchantments(selVal1);
+        }
+
+        $("#encOptsTab").append(htTable);
+
+        xSel = "";
+        $("#encbtnOK").hide();
+        $(".x-clickable-row").removeClass("highlight");
+        addXClicks();
+        self.updateStats(self.player);
+        console.log(self.player.inventory);
+
+      });
+
+      $('#rset1').change(function() {
+        selVal1 = $("input[name='set1-radio']:checked").val();
+
+        let htTable = null;
+        if (selVal1 == "buffs") {
+          htTable = self.player.getObjs("Buff", "e");
+        }
+        if (selVal1 == "gifts") {
+          htTable = self.player.getObjs("Gift", "e");
+        }
+        self.resetEncObjs();
+        $("#encObjs").empty();
+        $("#encObjs").append(htTable);
+        $(".e-clickable-row").click(function() {
+          let row = $(this).closest('tr');
+          $(".e-clickable-row").removeClass("highlight");
+          $(".x-clickable-row").removeClass("highlight");
+          if (eSel == $(row).find(".gText1").html()) {
+            eSel = "";
+            self.resetEncObjs();
+          } else {
+            $('input[name="set2-radio"]').removeAttr('disabled').button("refresh");
+            $(row).addClass("highlight");
+            eSel = $(row).find(".gText1").html();
+          }
+        });
+
+      });
+
+      $('#rset2').change(function() {
+        selVal2 = $("input[name='set2-radio']:checked").val();
+        let htTable = null;
+        $("#encOptsTab").empty();
+        if (selVal2 == "enc") {
+          htTable = self.player.getObjsFor("Enchantment", selVal1);
+          $("#encOptsTab").append(htTable);
+        }
+        if (selVal2 == "exp") {
+          htTable = buildEnchantments(selVal1);
+          $("#encOptsTab").append(htTable);
+        }
+        addXClicks();
+      });
+
+      function addXClicks() {
+        $(".x-clickable-row").click(function() {
+          let row = $(this).closest('tr');
+          $(".x-clickable-row").removeClass("highlight");
+          if (xSel == $(row).find(".gText1").html()) {
+            xSel = "";
+            $("#encbtnOK").hide();
+          } else {
+            $(row).addClass("highlight");
+            xSel = $(row).find(".gText1").html();
+            if (selVal2 == "exp") xSel = $(row).find(".id").html();
+            $("#encbtnOK").show();
+          }
+        });
+      }
+
+      function buildEnchantments(sel) {
+        let erow = "";
+        if (sel == "gifts") {
+          self.enchantments.filter(obj => (obj.Experience <= self.player.experience &&
+            (obj.Mode == "Cor" || obj.Mode == "Lst"))).forEach(function(obj) {
+            erow = buildrow(erow, obj);
+          });
+        }
+        if (sel == "buffs") {
+          self.enchantments.filter(obj => (obj.Experience <= self.player.experience &&
+            (obj.Mode == "Sed" || obj.Mode == "Skill"))).forEach(function(obj) {
+            erow = buildrow(erow, obj);
+          });
+        }
+
+        function buildrow(erow, obj) {
+          return erow + "<tr class='x-clickable-row'><td class='gText1'>" + obj.Name + "</td><td class='gText2'>" +
+            obj.Description + "</td><td>" + obj.Experience + "</td><td style = 'display:none' class = 'id'>" + obj.id + "</td></tr>";
+        }
+        return erow;
+      }
+
+      function rebuildEncs() {
+        $("#enchantments tbody").empty();
+        self.player.inventory.filter(obj => obj.properties.Class == "Enchantment").forEach(function(obj) {
+          self.addObject(obj, obj.name);
+        })
+      }
+    });
   }
 
   catchResponse(resp) {
@@ -151,6 +416,16 @@ export default class DialogClass {
     else
       this.driver.stepOn(this, resp);
   }
+
+
+
+  resetEncObjs() {
+    $('input[name="set2-radio"]').attr('disabled', 'disabled').button("refresh");
+    $('input[name="set2-radio"]').prop('checked', false).button("refresh");
+    $("#encOptsTab").empty();
+    $("#encbtnOK").hide();
+  }
+
 
   displayYesNo(prompt, driver) {
     this.resp = "no";
@@ -514,9 +789,13 @@ export default class DialogClass {
     $("#dplayerstats").html(playerText);
   }
 
-  displaynPCDialogNPC(npc,textAssets){
+  displaynPCDialogNPC(npc, textAssets) {
     let stats = npc.getStats(textAssets);
     $("#dnpcstats").html(stats);
+  }
+
+  updateControls(player) {
+    $("#experience").html(player.experience);
   }
 
 }
