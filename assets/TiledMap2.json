@@ -322,6 +322,12 @@
                          "x":-1.94444551534131,
                          "y":129.333666666667
                         }],
+                 "properties":[
+                        {
+                         "name":"speed",
+                         "type":"int",
+                         "value":6000
+                        }],
                  "rotation":0,
                  "type":"",
                  "visible":false,
@@ -350,6 +356,12 @@
                          "x":5.33333,
                          "y":161.333
                         }],
+                 "properties":[
+                        {
+                         "name":"speed",
+                         "type":"int",
+                         "value":5000
+                        }],
                  "rotation":0,
                  "type":"",
                  "visible":false,
@@ -373,6 +385,12 @@
                         {
                          "x":178.667,
                          "y":-166
+                        }],
+                 "properties":[
+                        {
+                         "name":"speed",
+                         "type":"int",
+                         "value":4000
                         }],
                  "rotation":0,
                  "type":"",
@@ -549,7 +567,7 @@
  "nextobjectid":51,
  "orientation":"orthogonal",
  "renderorder":"right-down",
- "tiledversion":"1.5.0",
+ "tiledversion":"1.6.0",
  "tileheight":32,
  "tilesets":[
         {
@@ -1459,6 +1477,6 @@
         }],
  "tilewidth":32,
  "type":"map",
- "version":1.5,
+ "version":"1.6",
  "width":50
 }

@@ -149,10 +149,12 @@ export class NPC extends Phaser.GameObjects.PathFollower {
       lYoyo = true;
     }
 
+    let o = nPCPath.properties.find(obj => obj.name == "speed");
+
     this.setPath(path);
     this.startFollow({
       positionOnPath: true,
-      duration: 6000,
+      duration: o.value,
       yoyo: lYoyo,
       repeat: -1,
       rotateToPath: false,
