@@ -67,12 +67,12 @@
           let result = null;
 
           if (response.choice == "give") {
-              let obj = this.player.inventory.find(o => o.name == response.id);
-              result = getGiftResponse(obj.properties, self);
+            let obj = this.player.inventory.find(o => o.name == response.id);
+            result = getGiftResponse(obj.properties, self);
 
-              // Delete gift from array
-              let ix = this.player.inventory.findIndex(o => o.name == response.id);
-              let del = this.player.inventory.splice(ix,1);
+            // Delete gift from array
+            let ix = this.player.inventory.findIndex(o => o.name == response.id);
+            let del = this.player.inventory.splice(ix, 1);
           } else {
             if (this.nPC.npcRel < 3)
               // in dialogue mode
@@ -112,7 +112,7 @@
 
       }
 
-      function getGiftResponse (obj, self) {
+      function getGiftResponse(obj, self) {
         let score = 0;
         if (obj.Lst) {
           self.nPC.npcLst += obj.Lst;
@@ -186,7 +186,7 @@
         };
       }
 
-      function processBonusAction (result, self) {
+      function processBonusAction(result, self) {
         // find the substring
         const str = result.text;
         const act = str.indexOf("+a");
@@ -328,6 +328,15 @@
 
     stepOn(qDialog, response) {
 
+      if (this.tile.properties.Class == "Door") {
+        this.stepOnDoor(qDialog, response);
+      } else {
+        this.stepOnPickup(qDialog, response);
+      }
+    }
+
+    stepOnPickup(qDialog, response) {
+
       switch (this.stage) {
         case 0: {
           let desc = this.tile.properties.Description;
@@ -358,6 +367,55 @@
           this.tile.setVisible(false);
 
           this.fin(true, prompt, qDialog);
+        }
+      }
+    }
+
+    stepOnDoor(qDialog, response) {
+      switch (this.stage) {
+        case 0: {
+          // Check if player has the key
+          const pKey = this.player.inventory.find(obj => obj.properties.DoorId == this.tile.properties.DoorId);
+          if (pKey) {
+            let prompt = "The " + pKey.name + " will fit the lock of the " + this.tile.getTileData().type +
+              ". Do you want to open the " + this.tile.getTileData().type + "?";
+            qDialog.displayYesNo(prompt, this);
+            this.stage = 1;
+            break;
+          } else {
+            let prompt = "You do not have a key to open the " + this.tile.getTileData().type;
+            this.fin(true, prompt, qDialog);
+            break;
+          }
+        }
+        case 1: {
+
+          if (response == "no") {
+            this.fin(false, "", qDialog);
+            break;
+          }
+
+          prompt = "You open the " + this.tile.getTileData().type + ".";
+
+          let ix = this.player.inventory.findIndex(obj => obj.properties.DoorId == this.tile.properties.DoorId);
+          this.player.inventory.splice(ix, 1);
+
+          console.log(this.tile);
+
+          let tmLayer = this.tile.layer.tilemapLayer;
+          const doorId = this.tile.properties.DoorId;
+
+          tmLayer.forEachTile(removeDoor, this, this.tile.x - 2, this.tile.y - 2, 5, 5)
+
+          this.fin(true, prompt, qDialog);
+
+          function removeDoor(t) {
+            console.log(t);
+            if (t.properties.DoorId == doorId) {
+              t.resetCollision(true);
+              t.setVisible(false);
+            }
+          }
         }
       }
     }
