@@ -5,6 +5,7 @@ export class Container extends Phaser.GameObjects.Sprite {
     this.search = "";
     this.contentsList = null;
     this.contents = null;
+    this.transit = "";
   }
 
   extractData(inv) {
@@ -149,12 +150,18 @@ export class NPC extends Phaser.GameObjects.PathFollower {
       lYoyo = true;
     }
 
-    let o = nPCPath.properties.find(obj => obj.name == "speed");
+    let dur = 6000;
+    if (nPCPath.properties) {
+      let o = nPCPath.properties.find(obj => obj.name == "speed");
+      if (o) {
+        dur = o.value;
+      }
+    }
 
     this.setPath(path);
     this.startFollow({
       positionOnPath: true,
-      duration: o.value,
+      duration: dur,
       yoyo: lYoyo,
       repeat: -1,
       rotateToPath: false,

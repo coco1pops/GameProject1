@@ -237,8 +237,15 @@
 
     };
 
-
     stepOn(qDialog, response) {
+      if (this.container.transit) {
+        this.stepOnTransit(qDialog, response);
+      } else {
+        this.stepOnContainer(qDialog, response);
+      }
+    }
+
+    stepOnContainer(qDialog, response) {
 
       switch (this.stage) {
         case 0: {
@@ -299,6 +306,30 @@
           this.fin(true, prompt, qDialog);
         }
       }
+    }
+
+    stepOnTransit(qDialog, response) {
+      switch (this.stage) {
+        case 0: {
+          let prompt = "You approach the " + this.container.name +
+            ". It is " + this.container.description.charAt(0).toLowerCase() +
+            this.container.description.slice(1) +
+            ". Do you want to follow the " + this.container.name + "?";
+
+          qDialog.displayYesNo(prompt, this);
+          this.stage = 1;
+          break;
+        }
+        case 1: {
+
+          if (response == "no") {
+            this.fin(false, "", qDialog);
+            break;
+          }
+          this.emitter.emit('transit', this);
+        }
+      }
+
     }
 
     fin(diag, prompt, qDialog) {
@@ -399,8 +430,11 @@
 
           let ix = this.player.inventory.findIndex(obj => obj.properties.DoorId == this.tile.properties.DoorId);
           this.player.inventory.splice(ix, 1);
+          $("#keys tbody").empty();
 
-          console.log(this.tile);
+          this.player.inventory.filter(obj => obj.properties.Class == "Key").forEach(function(obj) {
+            qDialog.addObject(obj, obj.name);
+          })
 
           let tmLayer = this.tile.layer.tilemapLayer;
           const doorId = this.tile.properties.DoorId;
@@ -410,7 +444,6 @@
           this.fin(true, prompt, qDialog);
 
           function removeDoor(t) {
-            console.log(t);
             if (t.properties.DoorId == doorId) {
               t.resetCollision(true);
               t.setVisible(false);

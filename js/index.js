@@ -55,26 +55,28 @@ const config = {
 
 const game = new Phaser.Game(config);
 let controls;
-let sceneix = 0;
+var sceneix = 0;
 let objLoader = [];
 let showDebug = true; // test to see if this disables the debug view
 
 function preload() {
 
-  let fi = "../assets/" + sceneList.Scenes[sceneix].TiledMap;
-  this.load.tilemapTiledJSON("map", fi);
-
   let self = this;
-  let i = 1;
-  let objList = sceneList.TileSets.filter(obj => obj.Scene == sceneList.Scenes[sceneix].Scene);
-  objList.forEach(obj => {
+
+  console.log("preload "+ sceneix);
+
+  let fi = null;
+  sceneList.Scenes.forEach(obj=> {
+      fi = "../assets/" + obj.TiledMap;
+      self.load.tilemapTiledJSON("map"+obj.Scene, fi);
+  })
+
+  sceneList.TileSets.forEach(obj => {
     fi = "../assets/" + obj.TileSet;
-    self.load.image("tiles" + i, fi);
-    i++;
+    self.load.image(obj.Reference, fi);
   });
 
-  objList = sceneList.Objects.filter(obj => obj.Scene == sceneList.Scenes[sceneix].Scene);
-  objList.forEach(obj => {
+  sceneList.Objects.forEach(obj => {
     fi = "../assets/" + obj.File;
     self.load.spritesheet(obj.Key, fi, {
       frameWidth: obj.frameWidth,
@@ -107,9 +109,9 @@ function create() {
   // STEP 1 : Build the map
   // Map is 50 tiles wide and high so 1600 x 1600 pixels
 
-
+  const mkey = "mapScene" + (sceneix + 1);
   const map = this.make.tilemap({
-    key: "map"
+    key: mkey
   });
 
   this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
@@ -119,7 +121,8 @@ function create() {
 
   let i = 1;
   map.tilesets.forEach(ts => {
-    map.addTilesetImage(ts.name, "tiles" + i );
+    console.log(ts);
+    map.addTilesetImage(ts.name, ts.Reference );
     i++;
   });
 
@@ -237,6 +240,8 @@ function create() {
   // STEP 3 : Set up camera
   // Phaser supports multiple cameras, but you can access the default camera like this:
   var camera = this.cameras.main;
+  camera.alpha = 0.7;
+
   camera.startFollow(player);
   // Make sure the camera borders are aliged to the map and stop bleeding when
   // scrolling.
@@ -268,6 +273,9 @@ function create() {
   dialogEmitter.addListener("finCon", _catchFin);
   dialogEmitter.addListener("finNPC", _catchNPC);
   dialogEmitter.addListener("finObj", _catchObj);
+  dialogEmitter.addListener("transit", _catchTransit);
+
+  console.log(game.scene.scenes[0]);
 
   function _collideContainer(player, container) {
 
@@ -312,6 +320,11 @@ function create() {
   function _catchObj(detail) {
     detail = null;
     resumeScene(player);
+  }
+
+  function _catchTransit(detail){
+    sceneix = detail.container.transit;
+    detail.container.scene.scene.restart();
   }
 
 }
