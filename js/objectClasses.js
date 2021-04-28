@@ -67,9 +67,10 @@ export class Player extends Phaser.GameObjects.Sprite {
 
   getObjs(objType, oclass) {
     let grow = "";
+    let cssClass = oclass + "Text";
     this.inventory.filter(obj => obj.properties.Class == objType).forEach(function(obj) {
-      grow = grow + "<tr class='" + oclass + "-clickable-row'><td class='gText1'>" + obj.name + "</td><td class='gText2'>" +
-        obj.properties.Description + "</td></tr>";
+      grow = grow + "<tr class='" + oclass + "-clickable-row'><td class='"+ cssClass + 1 + "'>" + obj.name +
+      "</td><td class='" + cssClass + 2 + "'>" + obj.properties.Description + "</td></tr>";
 
     });
     return grow;
@@ -88,7 +89,7 @@ export class Player extends Phaser.GameObjects.Sprite {
     });
 
     function buildRow(erow, obj) {
-      return erow + "<tr class='x-clickable-row'><td class='gText1'>" + obj.name + "</td><td class='gText2'>" +
+      return erow + "<tr class='x-clickable-row'><td class='eText1'>" + obj.name + "</td><td class='eText2'>" +
         obj.properties.Description + "</td><td style = 'display:none' class = 'id'>" + obj.name + "</td></tr>";
     }
     return erow;

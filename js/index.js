@@ -56,14 +56,13 @@ const config = {
 const game = new Phaser.Game(config);
 let controls;
 var sceneix = 0;
+var dayCycle = 0;
 let objLoader = [];
 let showDebug = true; // test to see if this disables the debug view
 
 function preload() {
 
   let self = this;
-
-  console.log("preload "+ sceneix);
 
   let fi = null;
   sceneList.Scenes.forEach(obj=> {
@@ -119,11 +118,8 @@ function create() {
   // Parameters are the name you gave the tileset in Tiled and then the key of the tileset image in
   // Phaser's cache (i.e. the name you used in preload)
 
-  let i = 1;
   map.tilesets.forEach(ts => {
-    console.log(ts);
     map.addTilesetImage(ts.name, ts.Reference );
-    i++;
   });
 
   // Extract the objects from the TileSet
@@ -226,6 +222,8 @@ function create() {
   player = new Player(this, spawnPoint.x, spawnPoint.y, "atlas", "char1-front");
   qDialog.player = player;
   qDialog.updateStats(player);
+  qDialog.updateControls(player);
+  qDialog.updateDayCycle(textAssets.dayCycle[dayCycle].name);
 
   // Watch the player and worldLayer for collisions, for the duration of the scene:
   this.physics.add.collider(player, belowLayer);
@@ -240,7 +238,8 @@ function create() {
   // STEP 3 : Set up camera
   // Phaser supports multiple cameras, but you can access the default camera like this:
   var camera = this.cameras.main;
-  camera.alpha = 0.7;
+  camera.alpha = textAssets.dayCycle[dayCycle].alpha;
+
 
   camera.startFollow(player);
   // Make sure the camera borders are aliged to the map and stop bleeding when
@@ -274,8 +273,7 @@ function create() {
   dialogEmitter.addListener("finNPC", _catchNPC);
   dialogEmitter.addListener("finObj", _catchObj);
   dialogEmitter.addListener("transit", _catchTransit);
-
-  console.log(game.scene.scenes[0]);
+  dialogEmitter.addListener("advance", _catchAdvance);
 
   function _collideContainer(player, container) {
 
@@ -324,7 +322,12 @@ function create() {
 
   function _catchTransit(detail){
     sceneix = detail.container.transit;
-    detail.container.scene.scene.restart();
+    restartScene(detail.container.scene.scene);
+  }
+
+  function _catchAdvance(detail){
+    (dayCycle++)%5;
+    restartScene(detail.container.scene.scene);
   }
 
 }
@@ -386,4 +389,8 @@ function resumeScene(player) {
   player.scene.scene.resume();
   player.body.setVelocity(0);
   player.body.enable = true;
+}
+
+function restartScene(scene){
+  scene.restart();
 }

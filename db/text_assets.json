@@ -26,5 +26,10 @@
       "roomAdvance": "+n is starting to enjoy this. She's willing to go further",
       "roomComplete": "+n's corruption is total. She'll do anything you ask",
       "roomFailure" : "You didn't manage to get +n excited",
-      "diagBored" : "+n looks disappointed. She wants more."
+      "diagBored" : "+n looks disappointed. She wants more.",
+      "dayCycle" : [{"name" : "Prime", "alpha" : 0.6, "bonus" : 0},
+                  { "name" : "Terce", "alpha" : 1, "bonus": 0},
+                  {"name" : "Sext", "alpha" : 1, "bonus" : 0},
+                  {"name" : "Vespers", "alpha" : 0.8, "bonus" : 1},
+                  {"name" : "Compline", "alpha" : 0.4, "bonus" : 1.5}]
     }

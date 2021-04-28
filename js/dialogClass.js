@@ -185,6 +185,7 @@ export default class DialogClass {
       let xSel = "";
       let selVal1 = "";
       let selVal2 = "";
+      let proc = false;
 
       $("input").checkboxradio();
       $('input[name="set2-radio"]').attr('disabled', 'disabled');
@@ -335,13 +336,13 @@ export default class DialogClass {
           let row = $(this).closest('tr');
           $(".e-clickable-row").removeClass("highlight");
           $(".x-clickable-row").removeClass("highlight");
-          if (eSel == $(row).find(".gText1").html()) {
+          if (eSel == $(row).find(".eText1").html()) {
             eSel = "";
             self.resetEncObjs();
           } else {
             $('input[name="set2-radio"]').removeAttr('disabled').button("refresh");
             $(row).addClass("highlight");
-            eSel = $(row).find(".gText1").html();
+            eSel = $(row).find(".eText1").html();
           }
         });
 
@@ -366,12 +367,12 @@ export default class DialogClass {
         $(".x-clickable-row").click(function() {
           let row = $(this).closest('tr');
           $(".x-clickable-row").removeClass("highlight");
-          if (xSel == $(row).find(".gText1").html()) {
+          if (xSel == $(row).find(".eText1").html()) {
             xSel = "";
             $("#encbtnOK").hide();
           } else {
             $(row).addClass("highlight");
-            xSel = $(row).find(".gText1").html();
+            xSel = $(row).find(".eText1").html();
             if (selVal2 == "exp") xSel = $(row).find(".id").html();
             $("#encbtnOK").show();
           }
@@ -394,8 +395,8 @@ export default class DialogClass {
         }
 
         function buildrow(erow, obj) {
-          return erow + "<tr class='x-clickable-row'><td class='gText1'>" + obj.Name + "</td><td class='gText2'>" +
-            obj.Description + "</td><td>" + obj.Experience + "</td><td style = 'display:none' class = 'id'>" + obj.id + "</td></tr>";
+          return erow + "<tr class='x-clickable-row'><td class='eText1'>" + obj.Name + "</td><td class='eText2a'>" +
+            obj.Description + "</td><td class='eText3'>" + obj.Experience + "</td><td style = 'display:none' class = 'id'>" + obj.id + "</td></tr>";
         }
         return erow;
       }
@@ -582,7 +583,7 @@ export default class DialogClass {
   }
 
   addObject(obj, name) {
-    let tmp = "<tr><td>" + name + "</td><td>";
+    let tmp = "<tr><td class='gText1'>" + name + "</td><td class='gText2'>";
     tmp = tmp + obj.properties.Description + "</td></tr>";
     switch (obj.properties.Class) {
       case "Buff": {
@@ -796,6 +797,10 @@ export default class DialogClass {
 
   updateControls(player) {
     $("#experience").html(player.experience);
+  }
+
+  updateDayCycle(txt) {
+    $("#dayCycle").html(txt);
   }
 
 }

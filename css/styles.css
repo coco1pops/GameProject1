@@ -83,8 +83,17 @@
   float:left;
 }
 
+#encPanel {
+  height: 588px;
+}
+
 #encList, #encOpts {
-  height: 200px;
+  height: 197px;
+  padding: 3px;
+}
+
+#encButtons {
+  padding: 3px;
 }
 
 #diagOpts {
@@ -111,7 +120,7 @@
   padding-left: 10px;
   padding-right:10px;
   height: 210px;
-  overflow: auto;
+  overflow-y: auto;
 }
 
 .npcResp {
@@ -125,22 +134,23 @@
 }
 
 .dTable, .iTable, .eTable {
-   border-collapse: collapse
+   border-collapse: collapse;
+   width: 100%;
+   table-layout: fixed;
 }
 
 .dTable thead, .eTable thead {
-  display:table;
-  width: 100%;
+  display:table
 }
 
 .dTable tbody, .eTable tbody {
     display: block;
-    height: 88px;
-    overflow: auto;
+    overflow-y: auto;
+    width: 100%;
 }
 
 .dTable tbody {
-  height: 88px;
+  height: 116px;
 }
 
 .eTable tbody {
@@ -148,26 +158,47 @@
 }
 
 .dTable tr, .iTable tr, .eTable tr {
-  border: 1px solid #DCDCDC;
-  padding: 5px
+  border: 1px solid lightgoldenrodyellow;
+  font-family: Arial, Helvetica, sans-serif;
 }
+
 .dTable .dText {
-  width: 600px;
+  width:700px;
 }
 
 .gText1 {
-  width: 100px;
+  width: 150px;
 }
 
 .gText2 {
-  width: 500px;
+  width: 550px;
 }
 
-.a-clickable-row:hover, .d-clickable-row:hover, .g-clickable-row:hover {
-  background-color: #696969;
+.eText1 {
+  width: 172px;
+}
+
+.eText2 {
+  width: 610px;
+}
+
+.eText2a {
+  width: 545px;
+}
+
+.eText3{
+  width: 65px;
+  text-align: right;
+}
+
+
+.a-clickable-row:hover, .d-clickable-row:hover, .g-clickable-row:hover,
+.e-clickable-row:hover, .x-clickable-row:hover
+ {
+  background-color: #575757;
 
 }
 
 .highlight {
-  background-color: #DCDCDC;
+  background-color: #ABABAB;
 }
