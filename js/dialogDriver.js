@@ -302,6 +302,7 @@
 
           qDialog.updateStats(this.player);
           this.container.contents = null;
+          this.container.contentsList = "";
 
           this.fin(true, prompt, qDialog);
         }
@@ -460,6 +461,57 @@
       } else {
         this.emitter.emit('finObj', this);
       }
+    }
+
+  }
+
+  export class EnchantDriver {
+    constructor() {
+      this.response = "no";
+    }
+
+    // Initialize the dialog modal
+    init(emitter) {
+      this.emitter = emitter;
+      this.stage = 0;
+      this.type = "enchant";
+
+    };
+
+    stepOn(qDialog, response) {
+
+      switch (this.stage) {
+        case 0: {
+          let prompt = "Do you want to go back to your cell and try to enchant some of your inventory?";
+          qDialog.displayYesNo(prompt, this);
+          this.stage = 1;
+          break;
+
+        }
+        case 1: {
+          if (response == "no") {
+            qDialog.closeEnchant();
+            this.fin(false);
+            break;
+          }
+
+          qDialog.initEnchant();
+          this.stage++;
+          break;
+        }
+
+        case 2: {
+          qDialog.closeEnchant();
+          this.fin(true);
+        }
+      }
+    }
+
+
+    fin(f) {
+      this.stage = 0;
+      this.emitter.emit(this.type, f);
+
     }
 
   }

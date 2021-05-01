@@ -8,8 +8,13 @@ export class Container extends Phaser.GameObjects.Sprite {
     this.transit = "";
   }
 
-  extractData(inv) {
+  collectData(col){
+    const o = {name: this.name, contentsList: this.contentsList, contents: this.contents,
+    x:this.x, y:this.y};
+    col.push(o);
+  }
 
+  extractData(inv) {
     if (this.contentsList) {
       const lst = this.contentsList.split(",");
       this.contents = [];
@@ -51,6 +56,22 @@ export class Player extends Phaser.GameObjects.Sprite {
     this.experience = 3000;
   }
 
+  collectData(){
+    const col = {name: this.name, inventory: this.inventory,
+    level: this.level, sed: this.sed, sedp: this.sedp, skill: this.skill,
+    skillp: this.skillp, experience: this.experience, x: this.x, y: this.y};
+    return col;
+  }
+
+  restore(restObj) {
+    this.name = restObj.name;
+    this.inventory = restObj.inventory;
+    this.level = restObj.level;
+    this.sed = restObj.sed;
+    this.sedp = restObj.sedp;
+    this.skill = restObj.skill;
+    this.experience = restObj.experience;
+  }
 
   addObject(objData, name) {
     console.log(objData);
@@ -116,11 +137,33 @@ export class NPC extends Phaser.GameObjects.PathFollower {
     this.collided = false;
   }
 
-  extractData() {
+  collectData(col){
     let self = this;
+    let rw = {name: this.npcName};
     this.data.each(function(parent, key, value) {
-      self[key] = value;
+      rw[key] = self[key];
     });
+    col.push(rw);
+  }
+
+  extractData(iRest, restObj) {
+    let self = this;
+    let rNPC = null;
+
+    this.data.each(function(parent, key, value) {
+        self[key] = value;
+    });
+
+    if (iRest) {
+      rNPC = restObj.nPCs.find(o => o.name === self.npcName);
+    }
+
+    if (rNPC) {
+      this.data.each(function(parent, key, value) {
+          self[key] = rNPC[key];
+      });
+    }
+
   }
 
   buildPath(map) {

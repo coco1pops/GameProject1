@@ -10,13 +10,15 @@ export default class DialogClass {
 
     this.status = false;
     this.inventory = false;
-    this.enchant = false;
+
     this.resp = "no";
     this.driver = null;
     this.stopFlag = true;
     this.scene = null;
     this.player = null;
     this.enchantments = null;
+    this.eDriver = null;
+
 
     const self = this;
 
@@ -61,22 +63,11 @@ export default class DialogClass {
     // Enchant button
     $(document).ready(function() {
       $("#enchant").click(function() {
-        if (self.enchant) {
-          self.enchant = false;
-          self.scene.resume();
-          $("#encPanel").slideUp("slow");
-          $("#status").button("enable");
-          $("#inventory").button("enable");
-        } else {
-          self.enchant = true;
-          self.scene.pause();
-          $("#encPanel").slideDown("slow");
-          $("#status").button("disable");
-          $("#inventory").button("disable");
-          $('input[name="set1-radio"]').prop('checked', false).button("refresh");
-          $("#encObjs").empty();
-          self.resetEncObjs();
-        }
+        $("#status").button("disable");
+        $("#inventory").button("disable");
+        $("#enchant").button("disable");
+        self.scene.pause();
+        self.eDriver.stepOn(self,"n");
       });
     });
 
@@ -88,7 +79,7 @@ export default class DialogClass {
       $("#diagOpts").tabs();
     })
 
-    // Container Dialogue
+    // Dialogue handler
 
     $(function() {
       $("#dialogContainer").dialog({
@@ -197,11 +188,7 @@ export default class DialogClass {
 
       $("#encbtnCancel").click(function() {
         eSel = "";
-        self.enchant = false;
-        self.scene.resume();
-        $("#encPanel").slideUp("slow");
-        $("#status").button("enable");
-        $("#inventory").button("enable");
+        self.eDriver.stepOn(self,"no");
       })
 
       $("#encbtnOK").click(function() {
@@ -418,8 +405,6 @@ export default class DialogClass {
       this.driver.stepOn(this, resp);
   }
 
-
-
   resetEncObjs() {
     $('input[name="set2-radio"]').attr('disabled', 'disabled').button("refresh");
     $('input[name="set2-radio"]').prop('checked', false).button("refresh");
@@ -554,6 +539,23 @@ export default class DialogClass {
     if (this.stopFlag) msgClass = "finResp"
 
     $("#npcDiagText").prepend("<p class='" + msgClass + "'>" + resp.text + "</p>").show();
+  }
+
+  initEnchant() {
+    this.enchant = true;
+    $("#encPanel").slideDown("slow");
+    $('input[name="set1-radio"]').prop('checked', false).button("refresh");
+    $("#encObjs").empty();
+    this.resetEncObjs();
+  }
+
+  closeEnchant() {
+    this.enchant = false;
+    this.scene.resume();
+    $("#encPanel").slideUp("slow");
+    $("#status").button("enable");
+    $("#inventory").button("enable");
+    $("#enchant").button("enable");
   }
 
   updateStats(player) {
@@ -799,7 +801,8 @@ export default class DialogClass {
     $("#experience").html(player.experience);
   }
 
-  updateDayCycle(txt) {
+  updateDayCycle(day,txt) {
+    $("#day").html(day);
     $("#dayCycle").html(txt);
   }
 

@@ -12,12 +12,14 @@ import {
 import {
   DialogDriver,
   ContainerDriver,
-  ObjectDriver
+  ObjectDriver,
+  EnchantDriver
 } from "./dialogDriver.js";
 
 var dd = new DialogDriver();
 var cd = new ContainerDriver();
 var od = new ObjectDriver();
+var ed = new EnchantDriver();
 
 import setAnims from "./anims.js";
 
@@ -30,6 +32,7 @@ qDialog.displayTitles();
 var player;
 var cursors;
 var nPCs;
+var containers;
 var inv = [];
 
 const config = {
@@ -55,12 +58,36 @@ const config = {
 
 const game = new Phaser.Game(config);
 let controls;
+var iRun = true;
+var iRest = false;
+var iRestScene = false;
+var restObj = null;
+var restScene = null;
 var sceneix = 0;
+var day = 1;
 var dayCycle = 0;
 let objLoader = [];
 let showDebug = true; // test to see if this disables the debug view
 
 function preload() {
+
+  // Only run preload when the game is started
+  // Need to use this section to load any saved game
+  // in particular to initialise sceneix
+
+  if(iRest) {
+    restObj = JSON.parse(window.localStorage.getItem('gSave'));
+    const lvl = "gLevel" + sceneix;
+    const txtRestScene = window.localStorage.getItem(lvl);
+    if (txtRestScene) {
+      iRestScene = true;
+      restScene = JSON.parse(txtRestScene);
+    }
+  }
+
+  if (!iRun) return;
+
+  iRun = false;
 
   let self = this;
 
@@ -106,7 +133,6 @@ function preload() {
 function create() {
 
   // STEP 1 : Build the map
-  // Map is 50 tiles wide and high so 1600 x 1600 pixels
 
   const mkey = "mapScene" + (sceneix + 1);
   const map = this.make.tilemap({
@@ -161,11 +187,11 @@ function create() {
   // (further params required to call)
   // classType extends sprite
 
-  var containers = map.createFromObjects("Object Layer", objLoader);
+  containers = map.createFromObjects("Object Layer", objLoader);
 
   // You need to add physics to the sprites so they can interact with the
   // player.
-
+  let i = 0;
   containers.forEach(container => {
 
     // extract the additional data from the map file
@@ -173,6 +199,13 @@ function create() {
     // from the text assets and enable the sprites
     container.extractData(inv);
     container.setText(sceneList);
+    if (container.contentsList && iRestScene) {
+      if (!restScene.containers[i].contentsList) {
+        container.contentsList = "";
+        container.contents = null;
+      }
+    }
+    i++;
     this.physics.world.enable(container);
   });
 
@@ -196,7 +229,7 @@ function create() {
 
   nPCs.forEach(nPC => {
     nPC.setTexture("atlas", "char2-front");
-    nPC.extractData();
+    nPC.extractData(iRest, restObj);
     if (nPC.npcPath) {
       nPC.buildPath(map);
     }
@@ -209,23 +242,35 @@ function create() {
   });
 
   tileObjLayer.setCollisionByExclusion([-1]);
+  if (iRestScene) {
+    restScene.objects.forEach(function (obj){
+      const t = tileObjLayer.findByIndex(obj);
+      t.resetCollision(true);
+      t.setVisible(false);
+    });
+  }
+
 
   // Get the spawn point from the map file and create the player sprite
 
   const spawnPoint = map.findObject("Object Layer", obj => obj.name === "Spawn Point");
 
-  // TODO: Other game assets might include: Doors and Exit Points. Doors would
-  // get deleted if the player has a key. Exit Points would load up the next scene
-
   // STEP 2 : Construct the player
 
   player = new Player(this, spawnPoint.x, spawnPoint.y, "atlas", "char1-front");
+
+  // If we're in restore mode, get the previous player settings
+
+  if (iRest) player.restore(restObj.player);
+
+  // Link up the display to the player
+
   qDialog.player = player;
   qDialog.updateStats(player);
   qDialog.updateControls(player);
-  qDialog.updateDayCycle(textAssets.dayCycle[dayCycle].name);
+  qDialog.updateDayCycle(day,textAssets.dayCycle[dayCycle].name);
 
-  // Watch the player and worldLayer for collisions, for the duration of the scene:
+  // Watch the player for collisions with blocking tiles, objects, containers and NPCs
   this.physics.add.collider(player, belowLayer);
   this.physics.add.collider(player, tileObjLayer, _collideObject, null, this);
   this.physics.add.overlap(player, containers, _collideContainer, null, this);
@@ -239,7 +284,6 @@ function create() {
   // Phaser supports multiple cameras, but you can access the default camera like this:
   var camera = this.cameras.main;
   camera.alpha = textAssets.dayCycle[dayCycle].alpha;
-
 
   camera.startFollow(player);
   // Make sure the camera borders are aliged to the map and stop bleeding when
@@ -267,16 +311,22 @@ function create() {
     });
   });
 
-  var dialogEmitter = new Phaser.Events.EventEmitter();
+  // set up an emitter to catch events coming back from the driver objects
+
+  let dialogEmitter = new Phaser.Events.EventEmitter();
   qDialog.emitter = dialogEmitter;
+
+  // Enchant dialogue doesn't have a driver, it's just part of the dialogue class
+  ed.init(dialogEmitter);
+  qDialog.eDriver = ed;
+
   dialogEmitter.addListener("finCon", _catchFin);
   dialogEmitter.addListener("finNPC", _catchNPC);
   dialogEmitter.addListener("finObj", _catchObj);
   dialogEmitter.addListener("transit", _catchTransit);
-  dialogEmitter.addListener("advance", _catchAdvance);
+  dialogEmitter.addListener("enchant", _catchEnchant);
 
   function _collideContainer(player, container) {
-
     pauseScene(player);
     cd.init(player, container, dialogEmitter);
     cd.stepOn(qDialog, textAssets, "n");
@@ -291,7 +341,6 @@ function create() {
     // disable player and nPC
     // call plugin init (qDialog player, nPC, textAssets)
     // from here flow switches between plugin and qDialog
-
     nPC.pauseFollow();
     nPC.setActive(false);
     nPC.body.enable = false;
@@ -309,7 +358,6 @@ function create() {
   }
 
   function _collideObject(player, tile) {
-
     pauseScene(player);
     od.init(player, tile, dialogEmitter);
     od.stepOn(qDialog, textAssets, "n");
@@ -321,13 +369,24 @@ function create() {
   }
 
   function _catchTransit(detail){
+    // Need to save player, NPC, container and object details
+    collectData(tileObjLayer, map.width, map.height);
     sceneix = detail.container.transit;
+    iRest = true;
     restartScene(detail.container.scene.scene);
   }
 
-  function _catchAdvance(detail){
-    (dayCycle++)%5;
-    restartScene(detail.container.scene.scene);
+  function _catchEnchant(detail){
+    collectData(tileObjLayer, map.width, map.height);
+    if (detail) {
+      dayCycle = (dayCycle + 1) % 5;
+      if (dayCycle == 0) day++;
+      player.x = spawnPoint.x;
+      player.y = spawnPoint.y;
+      camera.alpha = textAssets.dayCycle[dayCycle].alpha;
+      qDialog.updateDayCycle(day,textAssets.dayCycle[dayCycle].name);
+      resumeScene(player);
+    }
   }
 
 }
@@ -393,4 +452,36 @@ function resumeScene(player) {
 
 function restartScene(scene){
   scene.restart();
+}
+
+function collectData(otiles, wid, hgt){
+
+  // Store all the game data in local localStorage
+  // There's one key for the general data and one for the Level
+
+  let saveObj = {day: day, dayCycle: dayCycle, scene: {id: sceneix}};
+  saveObj.player = player.collectData();
+  saveObj.nPCs = [];
+  nPCs.forEach(nPC => {
+    nPC.collectData(saveObj.nPCs);
+  });
+
+  let saveSceneObj ={}
+  saveSceneObj.scene = sceneix;
+  saveSceneObj.containers = [];
+  containers.forEach(container => {
+    container.collectData(saveSceneObj.containers);
+  });
+  saveSceneObj.objects = [];
+
+  otiles.forEachTile(_chkTile, this, 0, 0, wid, hgt,{isNotEmpty: true});
+
+  function _chkTile(t) {
+    if(!t.visible) saveSceneObj.objects.push(t.index);
+  }
+
+  window.localStorage.setItem('gSave', JSON.stringify(saveObj));
+  const lvl = "gLevel" + sceneix;
+  window.localStorage.setItem(lvl, JSON.stringify(saveSceneObj));
+
 }
