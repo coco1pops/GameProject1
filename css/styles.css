@@ -21,8 +21,9 @@
   top:0px;
   left:0px;
   width:800px;
-  height:650px;
+  height:654px;
   background-image: url('../assets/back.png');
+  background-color: #A0A0A0;
   z-index: 3;
 }
 
@@ -178,7 +179,7 @@
   font-family: Arial, Helvetica, sans-serif;
 }
 
-.dTable .dText {
+.dTable .dText, .dTable .aText {
   width:700px;
 }
 

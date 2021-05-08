@@ -1,5 +1,5 @@
   //const { BehaviorTree, Sequence, Task, SUCCESS, FAILURE } = require('behaviortree');
-
+  import DProcessing from "./dProcessing.js";
 
   export class DialogDriver {
 
@@ -43,10 +43,13 @@
           qDialog.displaynPCDialogPlayer(this.stage, this.score, this.player);
           qDialog.displaynPCDialogNPC(this.nPC, this.textAssets);
 
-          const opts = this.nPC.getOpts(this.textAssets);
-          const gifts = this.player.getObjs("Gift", "g");
+          // get the options to display
+          // TODO: Split the get and the format
+          // TODO: Split out the getOpts into a new class
+        //  const opts = this.nPC.getOpts(this.textAssets);
+          const opts = DProcessing.getOpts(this.player, this.nPC, this.textAssets);
 
-          qDialog.displayAsk(opts, gifts, this.textAssets, this.stage, this.nPC.npcName);
+          qDialog.displayAsk(opts,this.textAssets, this.stage, this.nPC.npcName);
           this.stage++;
           break;
         }
@@ -68,7 +71,7 @@
 
           if (response.choice == "give") {
             let obj = this.player.inventory.find(o => o.name == response.id);
-            result = getGiftResponse(obj.properties, self);
+            result = getGiftResponse(obj.properties, self, self.textAssets.giftResponse);
 
             // Delete gift from array
             let ix = this.player.inventory.findIndex(o => o.name == response.id);
@@ -76,12 +79,15 @@
           } else {
             if (this.nPC.npcRel < 3)
               // in dialogue mode
+              // TODO: Split into separate class for dialogue processing
               result = getDiagResponse(response, self);
             else
+              // TODO: Split into separate class for room processing
               result = getRoomResponse(response, self);
           }
 
-          result.text = result.text.replace("+n", self.nPC.npcName);
+
+          // TODO replace the +a option with an additional flag on the result
           if (result.text.includes("+a")) {
             result = processBonusAction(result, self);
           }
@@ -112,7 +118,7 @@
 
       }
 
-      function getGiftResponse(obj, self) {
+      function getGiftResponse(obj, self, resp) {
         let score = 0;
         if (obj.Lst) {
           self.nPC.npcLst += obj.Lst;
@@ -122,14 +128,18 @@
           self.nPC.npcLst += obj.Rel;
           score += obj.Rel;
         }
+
+        const txt = DProcessing.formatText(resp, self.nPC);
         return {
           score: score,
-          text: "+n thanks you for the gift"
+          text: txt
         }
       }
 
       function getDiagResponse(response, self) {
-        if (response.effect > self.nPC.npcLst) { // Player over-reached
+        let res =  DProcessing.getDiagResponse(response, self.player, self.nPC, 0);
+
+        if (res == -1) { // Player over-reached
           self.nPC.processFailure();
           this.stage = 0;
           this.score = 0;
@@ -139,9 +149,8 @@
           };
         }
 
-        const result = self.nPC.calculateDialogResponse(response.id.effect);
-
-        if (result.ix == -1) {
+        // Player under-reached
+        if (res == -2) {
           return {
             score: 0,
             text: self.textAssets.diagBored
@@ -155,15 +164,17 @@
           resps = self.textAssets.nPCAction.find(rs => rs.rset == response.id.respSet);
         }
 
-        const nText = resps.responses[result.ix];
+        const nText = DProcessing.formatText(resps.responses[res], self.nPC);
+
         return {
-          score: result.res,
+          score: res,
           text: nText
         };
       }
 
       function getRoomResponse(response, self) {
-        if (response.cor - self.player.skill > self.nPC.npcCor) {
+        let res =  Dprocessing.getRoomResponse(response, self.player, self.nPC, 0);
+        if (res == -1) { // Player over-reached
           self.nPC.processFailure();
           self.stage = 0;
           self.score = 0;
@@ -172,16 +183,22 @@
             text: self.textAssets.failRoom
           };
         }
-        const result = response.id.cor * self.player.skill;
+        // Player under-reached
+        if (res == -2) {
+          return {
+            score: 0,
+            text: self.textAssets.diagBored
+          }
+        }
 
         if (response.choice == "say") {
           const resps = self.textAssets.nPCResponse.find(rs => rs.set == response.id.respSet);
         } else {
           const resps = self.textAssets.nPCAction.find(rs => rs.set == response.id.respSet);
         }
-        const nText = resps.responses[result];
+        const nText = DProcessing.formatText(resps.responses[res], self.nPC);
         return {
-          score: result,
+          score: res,
           text: nText
         };
       }

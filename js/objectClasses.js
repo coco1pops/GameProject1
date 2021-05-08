@@ -8,9 +8,14 @@ export class Container extends Phaser.GameObjects.Sprite {
     this.transit = "";
   }
 
-  collectData(col){
-    const o = {name: this.name, contentsList: this.contentsList, contents: this.contents,
-    x:this.x, y:this.y};
+  collectData(col) {
+    const o = {
+      name: this.name,
+      contentsList: this.contentsList,
+      contents: this.contents,
+      x: this.x,
+      y: this.y
+    };
     col.push(o);
   }
 
@@ -56,10 +61,19 @@ export class Player extends Phaser.GameObjects.Sprite {
     this.experience = 3000;
   }
 
-  collectData(){
-    const col = {name: this.name, inventory: this.inventory,
-    level: this.level, sed: this.sed, sedp: this.sedp, skill: this.skill,
-    skillp: this.skillp, experience: this.experience, x: this.x, y: this.y};
+  collectData() {
+    const col = {
+      name: this.name,
+      inventory: this.inventory,
+      level: this.level,
+      sed: this.sed,
+      sedp: this.sedp,
+      skill: this.skill,
+      skillp: this.skillp,
+      experience: this.experience,
+      x: this.x,
+      y: this.y
+    };
     return col;
   }
 
@@ -86,13 +100,28 @@ export class Player extends Phaser.GameObjects.Sprite {
     }
   }
 
+  // To be deprecated
+
   getObjs(objType, oclass) {
     let grow = "";
     let cssClass = oclass + "Text";
     this.inventory.filter(obj => obj.properties.Class == objType).forEach(function(obj) {
-      grow = grow + "<tr class='" + oclass + "-clickable-row'><td class='"+ cssClass + 1 + "'>" + obj.name +
-      "</td><td class='" + cssClass + 2 + "'>" + obj.properties.Description + "</td></tr>";
+      grow = grow + "<tr class='" + oclass + "-clickable-row'><td class='" + cssClass + 1 + "'>" + obj.name +
+        "</td><td class='" + cssClass + 2 + "'>" + obj.properties.Description + "</td></tr>";
 
+    });
+    return grow;
+  }
+
+  getObjects(objType, oclass) {
+    let grow = [];
+    this.inventory.filter(obj => obj.properties.Class == objType).forEach(function(obj) {
+      let row = {
+        class: oclass,
+        name: obj.name,
+        description: obj.properties.Description
+      };
+      grow.push(row);
     });
     return grow;
   }
@@ -137,9 +166,11 @@ export class NPC extends Phaser.GameObjects.PathFollower {
     this.collided = false;
   }
 
-  collectData(col){
+  collectData(col) {
     let self = this;
-    let rw = {name: this.npcName};
+    let rw = {
+      name: this.npcName
+    };
     this.data.each(function(parent, key, value) {
       rw[key] = self[key];
     });
@@ -151,7 +182,7 @@ export class NPC extends Phaser.GameObjects.PathFollower {
     let rNPC = null;
 
     this.data.each(function(parent, key, value) {
-        self[key] = value;
+      self[key] = value;
     });
 
     if (iRest) {
@@ -160,7 +191,7 @@ export class NPC extends Phaser.GameObjects.PathFollower {
 
     if (rNPC) {
       this.data.each(function(parent, key, value) {
-          self[key] = rNPC[key];
+        self[key] = rNPC[key];
       });
     }
 
@@ -301,7 +332,6 @@ export class NPC extends Phaser.GameObjects.PathFollower {
       }
       return "white";
     }
-    //TODO: Retrieve gift entries
   }
 
   calculateDialogResponse(effect) {

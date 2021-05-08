@@ -18,6 +18,7 @@
       "ObjectLevel":["","Holy","Most Holy"],
       "walkaway": "You avert your eyes and hurry past",
       "turndown": "You shake your head and turn away",
+      "giftResponse": "+n thanks you for the gift",
       "failDialog": "+n blushes, shakes her head and walks away",
       "failRoom": "+n's eyes widen in horror. She gather her things and storms out",
       "diagAdvance": "You feel +n has grown much closer",

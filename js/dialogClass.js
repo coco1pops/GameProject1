@@ -426,7 +426,7 @@ export default class DialogClass {
 
   }
 
-  displayAsk(opts, gifts, textAssets, stage, npcName) {
+  displayAsk(opts, textAssets, stage, npcName) {
     //
     // Clear out any left over text
     //
@@ -439,17 +439,20 @@ export default class DialogClass {
     $("#diagOpts").show();
 
     //
-    // Iniitialise buttons
+    // Initialise buttons
     //
     $("#bnOK").hide();
     $("#bnAccept").hide();
     $("#bnCancel").show();
     //
     // Load up data
-    //
-    $("#drow").append(opts.dialog);
-    $("#arow").append(opts.actions);
-    $("#grow").append(gifts);
+    // Need to build the html here
+    let ht = buildRow1(opts.dialog, "d");
+    $("#drow").append(ht);
+    ht = buildRow1(opts.actions, "a");
+    $("#arow").append(ht);
+    ht = buildRow2(opts.gifts, "g");
+    $("#grow").append(ht);
 
     let self = this;
 
@@ -488,7 +491,7 @@ export default class DialogClass {
         $(row).addClass("highlight");
         self.resp = {
           choice: "action",
-          text: $(row).find(".dText").html(),
+          text: $(row).find(".aText").html(),
           id: textAssets.playerAction.find(rw => rw.id == id)
         };
         $("#bnAccept").show();
@@ -517,6 +520,26 @@ export default class DialogClass {
     });
 
     $("#npcDialogPanel").dialog("open");
+
+    function buildRow1(rows, oclass){
+      let ret = "";
+      let cssClass = oclass + "Text";
+      rows.forEach(function(row,ix) {
+        ret = ret + "<tr class='"+ oclass + "-clickable-row'><td class='" + oclass + "Text' style ='color:" + row.colour + "'>" +
+          row.text + "</td><td style = 'display:none' class = 'id'>" + row.id + "</td></tr>";
+      });
+      return ret;
+    };
+
+    function buildRow2(rows, oclass){
+      let ret = "";
+      let cssClass = oclass + "Text";
+      rows.forEach(function(row,ix) {
+        ret = ret + "<tr class='"+ oclass + "-clickable-row'><td class='" + oclass + "Text1'>" + row.name +
+                    "</td><td class='" + oclass + "Text2'>" + row.description + "</td></tr>";
+      });
+      return ret;
+    };
   }
 
   displayResult(resp) {
